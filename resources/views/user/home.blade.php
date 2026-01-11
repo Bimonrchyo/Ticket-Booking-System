@@ -13,14 +13,10 @@
         <div class="container mx-auto flex justify-between items-center">
             <a href="#" class="text-white font-bold text-xl flex items-center gap-2">
                 <i class="fas fa-route"></i> HubTrans
-            </a>
-            <div class="hidden md:flex space-x-5 text-white">
-                <a href="/checkorder" class="hover:text-blue-200 mt-1">Cek Pesanan</a>
-                <a href="/history" class="hover:text-blue-200 mt-1">Histori</a>
-                <a href="/signin" class="bg-orange-500 px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">Sign in</a>
-            </div>
-            <div class="md:hidden text-white">
-                <i class="fas fa-bars text-2xl"></i>
+            <div class="hidden md:flex space-x-6 text-white items-center text-sm font-semibold">
+                <a href="/home" class="text-orange-400 border-b-2 border-orange-400">Beranda</a>
+                <a href="/history" class="hover:text-blue-200 ">Histori</a>
+                <a href="/login" class="bg-orange-500 px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">Sign in</a>
             </div>
         </div>
     </nav>
@@ -59,7 +55,7 @@
                 <?php endforeach; ?>
             </div>
 
-            <form action="/resultsearch" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <form action="/pencarian" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <input type="hidden" name="moda" value="<?= htmlspecialchars($active_moda) ?>">
                 
                 <div class="flex flex-col">
@@ -116,19 +112,15 @@
     </main>
 
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-3 z-50">
-        <a href="/homepage" class="flex flex-col items-center text-blue-600">
+        <a href="/home" class="flex flex-col items-center text-blue-600">
             <i class="fas fa-search text-xl"></i>
             <span class="text-[10px] mt-1 font-bold">Cari</span>
-        </a>
-        <a href="/checkorder" class="flex flex-col items-center text-gray-400">
-            <i class="fas fa-receipt text-xl"></i>
-            <span class="text-[10px] mt-1">Pesanan</span>
         </a>
         <a href="/history" class="flex flex-col items-center text-gray-400">
             <i class="fas fa-history text-xl"></i>
             <span class="text-[10px] mt-1">Histori</span>
         </a>
-        <a href="/signin" class="flex flex-col items-center text-gray-400">
+        <a href="/login" class="flex flex-col items-center text-gray-400">
             <i class="fas fa-user text-xl"></i>
             <span class="text-[10px] mt-1">Akun</span>
         </a>

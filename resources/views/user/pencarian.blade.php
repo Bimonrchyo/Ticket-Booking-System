@@ -64,7 +64,7 @@ $operators = $operators_map[$moda] ?? $operators_map['pesawat'];
     <nav class="bg-blue-700 text-white p-4 shadow-md sticky top-0 z-40">
         <div class="max-w-6xl mx-auto flex justify-between items-center px-2">
             <div class="flex items-center gap-4">
-                <a href="/homepage" class="text-xs bg-blue-800/50 px-3 py-2 rounded-lg border border-white/20 hover:bg-blue-600 transition">
+                <a href="javascript:history.back()" class="text-xs bg-blue-800/50 px-3 py-2 rounded-lg border border-white/20 hover:bg-blue-600 transition">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <div>
@@ -81,14 +81,14 @@ $operators = $operators_map[$moda] ?? $operators_map['pesawat'];
                     </div>
                 </div>
             </div>
-            <a href="/homepage" class="text-xs font-bold border border-white/40 px-4 py-2 rounded-lg hover:bg-white hover:text-blue-700 transition">UBAH</a>
+            <a href="/home" class="text-xs font-bold border border-white/40 px-4 py-2 rounded-lg hover:bg-white hover:text-blue-700 transition">UBAH</a>
         </div>
     </nav>
 
     <div class="max-w-6xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
         
         <aside class="hidden lg:block w-72 space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-white p-6 rounded-2xl shadow-2xl border border-gray-300 ring-1 ring-gray-100 transform hover:-translate-y-1 transition-all">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-gray-800">Filter</h3>
                     <button class="text-xs text-blue-600 font-bold">Reset</button>
@@ -163,7 +163,7 @@ $operators = $operators_map[$moda] ?? $operators_map['pesawat'];
 
             foreach($results as $index => $r):
             ?>
-            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 hover:border-blue-500 transition-all group relative overflow-hidden">
+            <div class="bg-white rounded-3xl shadow-2xl border border-gray-300 ring-1 ring-gray-100 hover:shadow-[0_20px_60px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all group relative overflow-hidden">
                 <div class="p-6 flex flex-col lg:flex-row lg:items-center gap-6">
                     
                         <div class="flex items-center gap-4 lg:w-48">
@@ -190,7 +190,7 @@ $operators = $operators_map[$moda] ?? $operators_map['pesawat'];
                             <div class="w-full flex items-center gap-1">
                                 <div class="w-1.5 h-1.5 rounded-full border-2 border-gray-200"></div>
                                 <div class="flex-1 h-[2px] bg-gray-100 relative">
-                                    <i class="fas <?php echo ($moda=='kereta')? 'fa-train' : (($moda=='bus')? 'fa-bus' : (($moda=='kapal')? 'fa-ship' : 'fa-plane')); ?> absolute -top-1.5 left-1/2 -translate-x-1/2 text-[10px] text-blue-200"></i>
+                                    <i class="fas <?php echo ($moda=='kereta')? 'fa-train' : (($moda=='bus')? 'fa-bus' : (($moda=='kapal')? 'fa-ship' :  'fa-plane')); ?> absolute -top-1.5 left-1/2 -translate-x-1/2 text-[10px] text-blue-200"></i>
                                 </div>
                                 <div class="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
                             </div>

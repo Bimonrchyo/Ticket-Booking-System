@@ -70,14 +70,14 @@
             </div>
 
             <div class="text-center">
-                <a href="/signup" class="inline-block w-full border-2 border-gray-100 text-blue-600 font-bold py-3 rounded-xl hover:bg-gray-50 transition-all">
+                <a href="/register" class="inline-block w-full border-2 border-gray-100 text-blue-600 font-bold py-3 rounded-xl hover:bg-gray-50 transition-all">
                     DAFTAR AKUN BARU
                 </a>
             </div>
         </div>
 
         <div class="p-6 bg-gray-50 text-center border-t border-gray-100">
-            <a href="/homepage" class="text-sm text-blue-600 font-semibold hover:text-blue-800">
+            <a href="/home" class="text-sm text-blue-600 font-semibold hover:text-blue-800">
                 <i class="fas fa-arrow-left mr-1"></i> Kembali ke Beranda
             </a>
         </div>

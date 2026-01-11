@@ -10,7 +10,7 @@
         @media print {
             .no-print { display: none; }
             body { background: white; }
-            .ticket-card { shadow: none; border: 1px solid #e5e7eb; }
+            .ticket-card { box-shadow: none; border: 1px solid #e5e7eb; }
         }
     </style>
 </head>
