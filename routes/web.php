@@ -41,3 +41,31 @@ route::get('/detail_jadwal', function () {
 route::get('/pembayaran', function () {
     return view('user.pembayaran');
 });
+
+route::get('/dashboard', function () {
+    return view('admin.dashboard');
+});
+
+route::get('/index', function () {
+    return view('admin.index');
+});
+
+route::get('/create', function () {
+    return view('admin.create');
+});
+
+route::get('/verifikasi', function () {
+    return view('admin.verifikasi');
+});
+
+route::get('/daftar', function () {
+    return view('superadmin.daftar_admin');
+});
+
+route::get('/tambah', function () {
+    return view('superadmin.tambah_admin');
+});
+
+route::get('/laporan', function () {
+    return view('superadmin.laporan_global');
+});
