@@ -1,71 +1,40 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\TransportController;
+use App\Http\Controllers\SuperAdminController;
 
-route::get('/login', function () {
-    return view('auth.login');
+// --- AUTH ---
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+
+// --- USER ROLE (Pelanggan) ---
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/home', [BookingController::class, 'index']);
+    Route::get('/cari/{type}', [BookingController::class, 'search']); // type: pesawat/bus/dll
+    Route::post('/booking/{type}', [BookingController::class, 'store']);
+    Route::get('/pembayaran/{id}', [BookingController::class, 'payment']);
+    Route::get('/history', [BookingController::class, 'history']);
+
+    // Cetak
+    Route::get('/cetak/struk/{id}', [BookingController::class, 'printInvoice']);
+    Route::get('/cetak/tiket/{id}', [BookingController::class, 'printTicket']);
 });
 
-route::get('/register', function () {
-    return view('auth.register');
+// --- ADMIN ROLE ---
+Route::middleware(['auth', 'role:admin,superadmin'])->prefix('admin')->group(function () {
+    // Kelola Transportasi & Jadwal secara dinamis
+    Route::resource('/transportasi/{type}', TransportController::class);
+    Route::resource('/jadwal/{type}', TransportController::class);
+
+    // Verifikasi Pembayaran
+    Route::get('/konfirmasi-pembayaran', [TransportController::class, 'listPayments']);
+    Route::patch('/konfirmasi-pembayaran/{id}', [TransportController::class, 'approvePayment']);
 });
 
-route::get('/history', function () {
-    return view('user.history');
-});
-
-Route::get('/home', function () {
-    return view('user.home');
-});
-
-Route::get('/pencarian', function () {
-    return view('user.pencarian');
-});
-
-route::get('/eticket', function () {
-    return view('user.e-ticket');
-});
-
-route::get('/struck', function () {
-    return view('user.struk');
-});
-
-route::get('/checkout', function () {
-    return view('user.checkout');
-});
-
-route::get('/detail_jadwal', function () {
-    return view('user.detail-jadwal');
-});
-
-route::get('/pembayaran', function () {
-    return view('user.pembayaran');
-});
-
-route::get('/dashboard', function () {
-    return view('admin.dashboard');
-});
-
-route::get('/index', function () {
-    return view('admin.index');
-});
-
-route::get('/create', function () {
-    return view('admin.create');
-});
-
-route::get('/verifikasi', function () {
-    return view('admin.verifikasi');
-});
-
-route::get('/daftar', function () {
-    return view('superadmin.daftar_admin');
-});
-
-route::get('/tambah', function () {
-    return view('superadmin.tambah_admin');
-});
-
-route::get('/laporan', function () {
-    return view('superadmin.laporan_global');
+// --- SUPERADMIN ROLE ---
+Route::middleware(['auth', 'role:superadmin'])->prefix('super')->group(function () {
+    Route::resource('/manage-admin', SuperAdminController::class);
+    Route::get('/laporan-global', [SuperAdminController::class, 'report']);
 });
