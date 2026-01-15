@@ -24,13 +24,22 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 
 // --- ADMIN ROLE ---
 Route::middleware(['auth', 'role:admin,superadmin'])->prefix('admin')->group(function () {
-    // Kelola Transportasi & Jadwal secara dinamis
-    Route::resource('/transportasi/{type}', TransportController::class);
-    Route::resource('/jadwal/{type}', TransportController::class);
 
-    // Verifikasi Pembayaran
-    Route::get('/konfirmasi-pembayaran', [TransportController::class, 'listPayments']);
-    Route::patch('/konfirmasi-pembayaran/{id}', [TransportController::class, 'approvePayment']);
+    // 1. Kelola Armada (Bus, Pesawat, dll)
+    // Menggunakan resource agar hemat baris untuk Index, Create, Store, Edit, Delete
+    Route::resource('/transportasi/{type}', TransportController::class)->parameters([
+        '{type}' => 'transportasi' // Mengamankan parameter agar tidak bentrok
+    ]);
+
+    // 2. Kelola Jadwal (Manual Route)
+    // Karena kita butuh method khusus 'storeJadwal'
+    Route::get('/jadwal/{type}', [TransportController::class, 'indexJadwal'])->name('jadwal.index');
+    Route::get('/jadwal/{type}/create', [TransportController::class, 'createJadwal'])->name('jadwal.create');
+    Route::post('/jadwal/{type}', [TransportController::class, 'storeJadwal'])->name('jadwal.store');
+
+    // 3. Verifikasi Pembayaran
+    Route::get('/konfirmasi-pembayaran', [TransportController::class, 'listPayments'])->name('admin.payments');
+    Route::patch('/konfirmasi-pembayaran/{id}', [TransportController::class, 'approvePayment'])->name('admin.approve');
 });
 
 // --- SUPERADMIN ROLE ---
