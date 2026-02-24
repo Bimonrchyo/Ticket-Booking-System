@@ -24,13 +24,13 @@
         </div>
 
         <div class="p-8 pt-4">
-            <form action="login" method="POST" class="space-y-5">
+            <form action="/login" method="POST" class="space-y-5">
                 @csrf
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email atau Username</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
                     <div class="relative">
                         <i class="fas fa-user absolute left-4 top-3.5 text-gray-400"></i>
-                        <input type="text" name="identity" required
+                        <input type="text" name="email" required
                             class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
                             placeholder="Masukkan email anda...">
                     </div>

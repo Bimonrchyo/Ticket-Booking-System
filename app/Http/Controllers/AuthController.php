@@ -48,9 +48,9 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             // Redirect berdasarkan role
-            if (auth('web')->user()->role == 'superadmin')
+            if (Auth::user()->role == 'superadmin')
                 return redirect('/super/dashboard');
-            if (auth('web')->user()->role == 'admin')
+            if (Auth::user()->role == 'admin')
                 return redirect('/admin/dashboard');
             return redirect('/home');
         }
