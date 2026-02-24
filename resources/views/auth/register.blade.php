@@ -24,8 +24,8 @@
         </div>
 
         <div class="p-8 pt-4">
-            <form action="proses_register.php" method="POST" class="space-y-4">
-                
+            <form action="register" method="POST" class="space-y-4">
+                @csrf
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
                     <div class="relative">
@@ -33,16 +33,6 @@
                         <input type="text" name="name" required
                             class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
                             placeholder="Nama sesuai identitas">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor WhatsApp</label>
-                    <div class="relative">
-                        <i class="fas fa-phone absolute left-4 top-3.5 text-gray-400"></i>
-                        <input type="tel" name="phone" required
-                            class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                            placeholder="0812xxxx">
                     </div>
                 </div>
 
@@ -83,7 +73,7 @@
                     </label>
                 </div>
 
-                <button type="submit" 
+                <button type="submit"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 transform active:scale-[0.98] transition-all">
                     DAFTAR SEKARANG
                 </button>

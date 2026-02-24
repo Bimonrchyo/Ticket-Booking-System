@@ -24,8 +24,8 @@
         </div>
 
         <div class="p-8 pt-4">
-            <form action="proses_signin.php" method="POST" class="space-y-5">
-                
+            <form action="login" method="POST" class="space-y-5">
+                @csrf
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email atau Username</label>
                     <div class="relative">
@@ -54,7 +54,7 @@
                     <label for="remember" class="ml-2 text-sm text-gray-600">Ingat saya di perangkat ini</label>
                 </div>
 
-                <button type="submit" 
+                <button type="submit"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 transform active:scale-[0.98] transition-all">
                     MASUK SEKARANG
                 </button>

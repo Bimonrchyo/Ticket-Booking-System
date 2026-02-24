@@ -1,98 +1,138 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration
+{
     public function up(): void
     {
-        // User Tabel
-        Schema::create('user', function (Blueprint $table) {
+        // Users Table
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('role', ['superAdmin', 'admin', 'user']);
-            $table->timestamp('created_at');
+            $table->timestamps();
         });
 
-        //Transportasi Tabel
+        // Password Reset Tokens
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
+        // Personal Access Tokens (Sanctum)
+        Schema::create('personal_access_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('tokenable');
+            $table->string('name');
+            $table->string('token', 64)->unique();
+            $table->text('abilities')->nullable();
+            $table->timestamp('last_used_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->timestamps();
+        });
+
+
+        // Sessions (optional, tapi sering dipakai)
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+
+
+        // Transportasi Table
         Schema::create('transportasi', function (Blueprint $table) {
             $table->id();
             $table->enum('tipe', ['pesawat', 'bus', 'kereta', 'kapal']);
             $table->string('nama_brand');
             $table->string('kode_identitas');
             $table->integer('kapasitas');
-            $table->integer('admin_id')
-                ->foreignId('user_id')
-                ->constrained('user')
+
+            $table->foreignId('user_id')
+                ->constrained('users')
                 ->cascadeOnDelete();
 
+            $table->timestamps();
         });
 
-        //Jadwal Tabel
+        // Jadwal Table
         Schema::create('jadwal', function (Blueprint $table) {
             $table->id();
-            $table->integer('transportasi_id')
-                ->foreignId('transportasi_id')
+
+            $table->foreignId('transportasi_id')
                 ->constrained('transportasi')
                 ->cascadeOnDelete();
+
             $table->string('titik_asal');
             $table->string('titik_tujuan');
             $table->dateTime('waktu_berangkat');
             $table->dateTime('waktu_tiba');
-            $table->decimal(15, 2);
+            $table->decimal('harga', 15, 2);
             $table->string('info_lokasi');
             $table->integer('stok_tersedia');
+
+            $table->timestamps();
         });
 
-        //Pemesanan Tabel
+        // Pemesanan Table
         Schema::create('pemesanan', function (Blueprint $table) {
             $table->id();
             $table->string('kode_booking')->unique();
-            $table->integer('user_id')
-                ->foreignId('user_id')
-                ->constrained('user')
+
+            $table->foreignId('user_id')
+                ->constrained('users')
                 ->cascadeOnDelete();
-            $table->integer('jadwal_id')
-                ->foreignId('jadwal_id')
+
+            $table->foreignId('jadwal_id')
                 ->constrained('jadwal')
                 ->cascadeOnDelete();
+
             $table->string('nomor_kursi');
-            $table->decimal(15, 2); //total harga 
+            $table->decimal('total_harga', 15, 2);
             $table->enum('status', ['pending', 'paid', 'canceled', 'completed']);
             $table->text('qr_code_data');
-            $table->timestamp('created_at');
+
+            $table->timestamps();
         });
 
-        //Pembayaran Tabel
+        // Pembayaran Table
         Schema::create('pembayaran', function (Blueprint $table) {
             $table->id();
-            $table->integer('booking_id')
-                ->foreignId('pemesanan_id')
+
+            $table->foreignId('pemesanan_id')
                 ->constrained('pemesanan')
                 ->cascadeOnDelete();
+
             $table->string('metode_bayar');
-            $table->string('bukti_transfer');
-            $table->decimal(15, 2, ); //nominal bayar
-            $table->timestamp('payment_time');
-            $table->timestamp('verified_at');
+            $table->string('bukti_transfer')->nullable();
+            $table->decimal('nominal_bayar', 15, 2);
+            $table->timestamp('payment_time')->nullable();
+            $table->timestamp('verified_at')->nullable();
+
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('user');
-        Schema::dropIfExists('transportasi');
-        Schema::dropIfExists('jadwal');
-        Schema::dropIfExists('pemesanan');
         Schema::dropIfExists('pembayaran');
+        Schema::dropIfExists('pemesanan');
+        Schema::dropIfExists('jadwal');
+        Schema::dropIfExists('transportasi');
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('failed_jobs');
+        Schema::dropIfExists('personal_access_tokens');
+        Schema::dropIfExists('password_reset_tokens');
+
     }
 };
