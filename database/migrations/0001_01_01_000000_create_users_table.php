@@ -47,7 +47,12 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
-
+        Schema::create('lokasi', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->string('kode', 10);
+            $table->timestamps();
+        });
 
         // Transportasi Table
         Schema::create('transportasi', function (Blueprint $table) {
@@ -71,15 +76,15 @@ return new class extends Migration
             $table->foreignId('transportasi_id')
                 ->constrained('transportasi')
                 ->cascadeOnDelete();
-
-            $table->string('titik_asal');
-            $table->string('titik_tujuan');
+            $table->foreignId('asal_id')->constrained('lokasi');
+            $table->foreignId('tujuan_id')->constrained('lokasi');
             $table->dateTime('waktu_berangkat');
             $table->dateTime('waktu_tiba');
-            $table->decimal('harga', 15, 2);
+            $table->unsignedBigInteger('harga');
             $table->string('info_lokasi');
             $table->integer('stok_tersedia');
-
+            $table->index(['titik_asal', 'titik_tujuan', 'waktu_berangkat']);
+            $table->index('transportasi_id');
             $table->timestamps();
         });
 
@@ -97,10 +102,10 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->string('nomor_kursi');
-            $table->decimal('total_harga', 15, 2);
             $table->enum('status', ['pending', 'paid', 'canceled', 'completed']);
             $table->text('qr_code_data');
-
+            $table->unsignedBigInteger('total_harga');
+            $table->unique(['jadwal_id', 'nomor_kursi']);
             $table->timestamps();
         });
 
@@ -114,13 +119,13 @@ return new class extends Migration
 
             $table->string('metode_bayar');
             $table->string('bukti_transfer')->nullable();
-            $table->decimal('nominal_bayar', 15, 2);
             $table->timestamp('payment_time')->nullable();
             $table->timestamp('verified_at')->nullable();
-
+            $table->unsignedBigInteger('nominal_bayar');
             $table->timestamps();
         });
     }
+
 
     public function down(): void
     {
@@ -128,6 +133,7 @@ return new class extends Migration
         Schema::dropIfExists('pemesanan');
         Schema::dropIfExists('jadwal');
         Schema::dropIfExists('transportasi');
+        Schema::dropIfExists('lokasi');
         Schema::dropIfExists('users');
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('failed_jobs');

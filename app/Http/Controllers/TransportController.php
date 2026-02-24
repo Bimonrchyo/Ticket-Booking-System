@@ -24,6 +24,12 @@ class TransportController extends Controller
 
     public function store(Request $request, $type)
     {
+        $request->validate([
+            'nama_brand' => 'required|string|max:100',
+            'kode_identitas' => 'required|string|max:50',
+            'kapasitas' => 'required|integer|min:1'
+        ]);
+
         Transportasi::create([
             'tipe' => $type,
             'nama_brand' => $request->nama_brand,
@@ -38,7 +44,7 @@ class TransportController extends Controller
 
     public function indexJadwal($type)
     {
-        $data = Jadwal::whereHas('transportasi', function($q) use ($type) {
+        $data = Jadwal::whereHas('transportasi', function ($q) use ($type) {
             $q->where('tipe', $type);
         })->with('transportasi')->get();
 
@@ -71,14 +77,15 @@ class TransportController extends Controller
     public function listPayments()
     {
         $payments = Booking::with(['user', 'jadwal.transportasi'])
-                    ->where('status', 'pending')
-                    ->get();
+            ->where('status', 'pending')
+            ->get();
         return view('admin.pembayaran.index', compact('payments'));
     }
 
     public function approvePayment($id)
     {
-        Booking::where('id', $id)->update(['status' => 'paid']);
+        $booking = Booking::where('status', 'pending')->findOrFail($id);
+        $booking->update(['status' => 'paid']);
         return redirect()->back()->with('success', 'Pembayaran dikonfirmasi!');
     }
 }

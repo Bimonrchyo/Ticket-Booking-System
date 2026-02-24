@@ -18,10 +18,11 @@
 					<div class="hidden items-center space-x-6 text-sm font-semibold text-white md:flex">
 						<a class="border-b-2 border-orange-400 text-orange-400" href="/home">Beranda</a>
 						<a class="hover:text-blue-200" href="/history">Histori</a>
-						@auth
-							<a class="rounded-lg bg-orange-500 px-4 py-2 font-semibold transition hover:bg-orange-600"
-								href="/logout">Logout</a>
-						@endauth
+						<form method="POST" action="/logout">
+							@csrf
+							<button class="rounded-lg bg-orange-500 px-4 py-2 font-semibold transition hover:bg-orange-600"
+								type="submit">Logout</button>
+						</form>
 					</div>
 			</div>
 		</nav>
@@ -39,39 +40,39 @@
 			<div class="rounded-2xl bg-white p-6 shadow-xl md:p-8">
 
 				<div class="no-scrollbar mb-6 mt-10 flex gap-4 overflow-x-auto border-b pb-4">
-					<?php
-                $modas = [
-                    ['id' => 'pesawat', 'icon' => 'fa-plane', 'label' => 'Pesawat'],
-                    ['id' => 'bus', 'icon' => 'fa-bus', 'label' => 'Bus'],
-                    ['id' => 'kereta', 'icon' => 'fa-train', 'label' => 'Kereta'],
-                    ['id' => 'kapal', 'icon' => 'fa-ship', 'label' => 'Kapal'],
-                ];
 
-                $active_moda = isset($_GET['type']) ? $_GET['type'] : 'pesawat';
+					@foreach ($modas as $moda)
+						@php
+							$activeClass =
+							    $active_moda == $moda['id']
+							        ? 'text-blue-600 border-b-2 border-blue-600'
+							        : 'text-gray-500 hover:text-blue-500';
+						@endphp
 
-                foreach ($modas as $moda):
-                    $activeClass = ($active_moda == $moda['id']) ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-blue-500';
-                ?>
-					<a class="<?= $activeClass ?> flex min-w-[80px] flex-col items-center pb-2 transition"
-						href="?type=<?= $moda['id'] ?>">
-						<div class="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-							<i class="fas <?= $moda['icon'] ?> text-xl"></i>
-						</div>
-						<span class="text-xs font-bold uppercase tracking-wider"><?= $moda['label'] ?></span>
-					</a>
-					<?php endforeach; ?>
+						<a class="{{ $activeClass }} flex min-w-[80px] flex-col items-center pb-2 transition"
+							href="?type={{ $moda['id'] }}">
+							<div class="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+								<i class="fas {{ $moda['icon'] }} text-xl"></i>
+							</div>
+							<span class="text-xs font-bold uppercase tracking-wider">
+								{{ $moda['label'] }}
+							</span>
+						</a>
+					@endforeach
 				</div>
 
 				<form class="grid grid-cols-1 gap-6 md:grid-cols-4" action="/pencarian" method="GET">
-					<input name="moda" type="hidden" value="<?= htmlspecialchars($active_moda) ?>">
+					<input name="moda" type="hidden" value="{{ $active_moda }}">
 
 					<div class="flex flex-col">
 						<label class="mb-1 text-sm font-semibold italic text-gray-600">Asal</label>
 						<div class="relative">
 							<i class="fas fa-map-marker-alt absolute left-3 top-3.5 text-gray-400"></i>
-							<input
-								class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-blue-500"
-								name="asal" type="text" placeholder="Kota Asal...">
+							<select name="asal">
+								@foreach ($lokasis as $lokasi)
+									<option value="{{ $lokasi->id }}">{{ $lokasi->nama }}</option>
+								@endforeach
+							</select>
 						</div>
 					</div>
 
@@ -79,9 +80,11 @@
 						<label class="mb-1 text-sm font-semibold italic text-gray-600">Tujuan</label>
 						<div class="relative">
 							<i class="fas fa-location-arrow absolute left-3 top-3.5 text-gray-400"></i>
-							<input
-								class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-blue-500"
-								name="tujuan" type="text" placeholder="Kota Tujuan...">
+							<select name="tujuan">
+								@foreach ($lokasis as $lokasi)
+									<option value="{{ $lokasi->id }}">{{ $lokasi->nama }}</option>
+								@endforeach
+							</select>
 						</div>
 					</div>
 
@@ -91,7 +94,7 @@
 							<i class="fas fa-calendar-alt absolute left-3 top-3.5 text-gray-400"></i>
 							<input
 								class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-blue-500"
-								name="tanggal" type="date">
+								name="tanggal" type="date" required>
 						</div>
 					</div>
 

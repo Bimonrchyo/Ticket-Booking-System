@@ -2,6 +2,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TransportController;
 use App\Http\Controllers\SuperAdminController;
 
@@ -10,12 +12,12 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout']);
 
 // --- USER ROLE (Pelanggan) ---
 Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/home', [BookingController::class, 'index']);
-    Route::get('/cari/{type}', [BookingController::class, 'search']); // type: pesawat/bus/dll
+    Route::get('/home', [HomeController::class, 'index']);
+    Route::get('/pencarian', [SearchController::class, 'index']); // type: pesawat/bus/dll
     Route::post('/booking/{type}', [BookingController::class, 'store']);
     Route::get('/pembayaran/{id}', [BookingController::class, 'payment']);
     Route::get('/history', [BookingController::class, 'history']);
