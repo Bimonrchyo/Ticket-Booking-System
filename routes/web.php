@@ -16,15 +16,38 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 // --- USER ROLE (Pelanggan) ---
 Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/home', [HomeController::class, 'index']);
-    Route::get('/pencarian', [SearchController::class, 'index']); // type: pesawat/bus/dll
-    Route::post('/booking/{type}', [BookingController::class, 'store']);
-    Route::get('/pembayaran/{id}', [BookingController::class, 'payment']);
-    Route::get('/history', [BookingController::class, 'history']);
 
-    // Cetak
-    Route::get('/cetak/struk/{id}', [BookingController::class, 'printInvoice']);
-    Route::get('/cetak/tiket/{id}', [BookingController::class, 'printTicket']);
+    Route::get('/home', [HomeController::class, 'index']);
+
+    Route::get('/pencarian', [SearchController::class, 'index'])
+        ->name('pencarian');
+
+    Route::get('/booking/{jadwal}', [BookingController::class, 'create'])
+        ->name('booking.create');
+
+    Route::get('/checkout/{jadwal}', [BookingController::class, 'checkout'])
+        ->name('checkout');
+
+    Route::post('/checkout/{jadwal}', [BookingController::class, 'store'])
+        ->name('booking.store');
+
+    Route::get('/pembayaran/{booking}', [BookingController::class, 'payment'])
+        ->name('pembayaran');
+
+    Route::post('/pembayaran/{booking}/upload', [BookingController::class, 'uploadBukti'])
+        ->name('upload.bukti');
+
+    Route::post('/pembayaran/{booking}/konfirmasi', [BookingController::class, 'konfirmasiPembayaran'])
+        ->name('konfirmasi.pembayaran');
+
+    Route::get('/history', [BookingController::class, 'history'])
+        ->name('history');
+
+    Route::get('/cetak/struk/{booking}', [BookingController::class, 'printInvoice'])
+        ->name('invoice.print');
+
+    Route::get('/cetak/tiket/{booking}', [BookingController::class, 'printTicket'])
+        ->name('ticket.print');
 });
 
 // --- ADMIN ROLE ---

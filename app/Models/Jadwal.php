@@ -22,6 +22,10 @@ class Jadwal extends Model
     {
         return $this->belongsTo(Lokasi::class, 'tujuan_id');
     }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'jadwal_id');
+    }
     public function getDurasiAttribute()
     {
         $berangkat = \Carbon\Carbon::parse($this->waktu_berangkat);

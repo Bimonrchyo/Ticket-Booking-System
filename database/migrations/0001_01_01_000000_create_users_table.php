@@ -92,7 +92,7 @@ return new class extends Migration
         Schema::create('pemesanan', function (Blueprint $table) {
             $table->id();
             $table->string('kode_booking')->unique();
-
+            $table->timestamp('expired_at')->nullable();
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
@@ -100,7 +100,8 @@ return new class extends Migration
             $table->foreignId('jadwal_id')
                 ->constrained('jadwal')
                 ->cascadeOnDelete();
-
+            $table->string('nama_penumpang');
+            $table->string('nik', 16);
             $table->string('nomor_kursi');
             $table->enum('status', ['pending', 'paid', 'canceled', 'completed']);
             $table->text('qr_code_data');
@@ -116,7 +117,12 @@ return new class extends Migration
             $table->foreignId('pemesanan_id')
                 ->constrained('pemesanan')
                 ->cascadeOnDelete();
-
+            $table->enum('status', [
+                'unpaid',
+                'uploaded',
+                'verified',
+                'rejected'
+            ])->default('unpaid');
             $table->string('metode_bayar');
             $table->string('bukti_transfer')->nullable();
             $table->timestamp('payment_time')->nullable();

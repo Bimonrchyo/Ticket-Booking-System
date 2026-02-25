@@ -12,88 +12,162 @@ use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
-
-    // 2. Fungsi Pencarian Jadwal
-    public function search(Request $request, $type)
+    public function create(Jadwal $jadwal)
     {
-        // Cari jadwal berdasarkan tipe transportasi, asal, dan tujuan
-        $jadwals = Jadwal::whereHas('transportasi', function ($query) use ($type) {
-            $query->where('tipe', $type);
-        })
-            ->where('titik_asal', 'like', "%{$request->asal}%")
-            ->where('titik_tujuan', 'like', "%{$request->tujuan}%")
-            ->where('stok_tersedia', '>', 0)
-            ->with('transportasi')
-            ->get();
+        $jadwal->load(['transportasi', 'asal', 'tujuan']);
 
-        return view('user.pencarian', compact('jadwals', 'type'));
+        return view('user.detail-jadwal', compact('jadwal'));
+    }
+
+    public function checkout(Request $request, Jadwal $jadwal)
+    {
+        $request->validate([
+            'seat' => 'required|string|max:5'
+        ]);
+
+        return view('user.checkout', [
+            'jadwal' => $jadwal->load(['transportasi', 'asal', 'tujuan']),
+            'seat' => $request->seat
+        ]);
     }
 
     // 3. Fungsi Simpan Booking (Store)
-    public function store(Request $request, $type)
+    public function store(Request $request, Jadwal $jadwal)
     {
         $request->validate([
-            'jadwal_id' => 'required',
-            'nomor_kursi' => 'required',
+            'nomor_kursi' => 'required|string|max:5',
+            'nama_penumpang' => 'required|string|max:255',
+            'nik' => 'required|digits:16'
         ]);
 
-        DB::transaction(function () use ($request, $type) {
-            $jadwal = Jadwal::where('id', $request->jadwal_id)
-                ->lockForUpdate()
-                ->firstOrFail();
+        $booking = DB::transaction(function () use ($request, $jadwal) {
 
-            if ($jadwal->stok_tersedia <= 0) {
+            $jadwalLocked = Jadwal::where('id', $jadwal->id)
+                ->lockForUpdate()
+                ->first();
+
+            if ($jadwalLocked->stok_tersedia <= 0) {
                 throw new \Exception('Stok habis');
             }
 
-            $jadwal->decrement('stok_tersedia');
+            $seatTaken = Booking::where('jadwal_id', $jadwalLocked->id)
+                ->where('nomor_kursi', $request->nomor_kursi)
+                ->exists();
 
-            Booking::create([
+            if ($seatTaken) {
+                throw new \Exception('Kursi sudah dibooking');
+            }
+
+            $kodeBooking = 'HT-'.strtoupper(Str::random(8));
+
+            $jadwalLocked->decrement('stok_tersedia');
+
+            return Booking::create([
                 'kode_booking' => $kodeBooking,
-                'user_id' => auth('web')->id(),
-                'jadwal_id' => $request->jadwal_id,
+                'user_id' => Auth::id(),
+                'jadwal_id' => $jadwalLocked->id,
                 'nomor_kursi' => $request->nomor_kursi,
-                'total_harga' => $jadwal->harga,
-                'status' => 'pending'
+                'nama_penumpang' => $request->nama_penumpang,
+                'expired_at' => now()->addMinutes(30),
+                'nik' => $request->nik,
+                'status' => 'pending',
+                'qr_code_data' => $kodeBooking,
+                'total_harga' => $jadwalLocked->harga
             ]);
         });
 
-        return redirect()->route('pembayaran', $booking->id)->with('success', 'Booking berhasil, silakan bayar!');
+        return redirect()
+            ->route('pembayaran', $booking->id)
+            ->with('success', 'Booking berhasil, silakan bayar.');
     }
 
-    // 4. Halaman Pembayaran (Instruksi Upload Bukti)
-    public function payment($id)
+    public function uploadBukti(Request $request, Booking $booking)
     {
-        $booking = Booking::with('jadwal.transportasi')->findOrFail($id);
+        $request->validate([
+            'bukti_transfer' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048'
+        ]);
+
+        $path = $request->file('bukti_transfer')->store('bukti-transfer', 'public');
+
+        $payment = $booking->payment;
+
+        if ($payment) {
+            $payment->update([
+                'bukti_transfer' => $path,
+                'status' => 'uploaded'
+            ]);
+        } else {
+            $booking->payment()->create([
+                'metode' => 'transfer',
+                'bukti_transfer' => $path,
+                'status' => 'uploaded'
+            ]);
+        }
+
+        return back()->with('success', 'Bukti berhasil diupload.');
+
+    }
+    public function konfirmasiPembayaran(Booking $booking)
+    {
+        abort_if($booking->user_id !== Auth::id(), 403);
+
+        $payment = $booking->payment;
+
+        if (! $payment || $payment->status !== 'uploaded') {
+            return back()->with('error', 'Upload bukti dulu.');
+        }
+
+        $booking->payment()->create([
+            'metode_bayar' => 'transfer',
+            'bukti_transfer' => $path,
+            'status' => 'uploaded',
+            'nominal_bayar' => $booking->total_harga,
+            'payment_time' => now()
+        ]);
+
+        return redirect()->route('history')
+            ->with('success', 'Pembayaran berhasil dikonfirmasi.');
+
+    }
+    // 4. Halaman Pembayaran (Instruksi Upload Bukti)
+    public function payment(Booking $booking)
+    {
+        abort_if($booking->user_id !== Auth::id(), 403);
+
+        $booking->load('jadwal.transportasi');
+
         return view('user.pembayaran', compact('booking'));
     }
     // Histori Pemesanan User
     public function history()
     {
-        $histori = Booking::where('user_id', auth('web')->id())
+        $histori = Booking::where('user_id', Auth::id())
             ->with('jadwal.transportasi')
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->get();
 
         return view('user.riwayat', compact('histori'));
     }
-
     // Proses Cetak Tiket ke PDF
-    public function printTicket($id)
+    public function printTicket(Booking $booking)
     {
-        $booking = Booking::with('jadwal.transportasi', 'user')->findOrFail($id);
+        abort_if($booking->user_id !== auth()->id(), 403);
+        abort_if($booking->status !== 'paid', 403);
 
-        // Cek apakah sudah bayar
-        abort_if($booking->user_id !== Auth::id(), 403);
+        $booking->load(['jadwal.transportasi', 'user']);
 
         $pdf = Pdf::loadView('pdf.tiket-pdf', compact('booking'));
+
         return $pdf->download('Tiket-'.$booking->kode_booking.'.pdf');
     }
 
     // Proses Cetak Struk ke PDF
     public function printInvoice($id)
     {
-        $booking = Booking::with('payment', 'user')->findOrFail($id);
+        $booking = Booking::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->with('payment', 'user')
+            ->firstOrFail();
 
         $pdf = Pdf::loadView('pdf.invoice-pdf', compact('booking'));
         return $pdf->stream('Invoice-'.$booking->kode_booking.'.pdf');

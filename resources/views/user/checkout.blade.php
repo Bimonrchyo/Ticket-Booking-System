@@ -1,152 +1,186 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Detail Penumpang | HubTrans</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-gray-50 font-sans" x-data="{ 
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Checkout - Detail Penumpang | HubTrans</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	</head>
+
+	<body class="bg-gray-50 font-sans" x-data="{
     sameAsBooker: false,
     bookerName: '',
     passengerName: '',
     passengerID: '',
     updatePassenger() {
-        if(this.sameAsBooker) {
+        if (this.sameAsBooker) {
             this.passengerName = this.bookerName;
         }
     }
 }">
 
-    <nav class="bg-blue-700 text-white p-4 shadow-md sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto flex items-center justify-between px-2">
-            <div class="flex items-center gap-4">
-                <a href="javascript:history.back()" class="bg-blue-600/50 p-2 rounded-lg hover:bg-blue-500 transition">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <h1 class="font-bold text-lg">Checkout</h1>
-            </div>
-            <div class="hidden md:flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
-                <span class="opacity-50">Pilih</span>
-                <i class="fas fa-chevron-right opacity-30 text-[8px]"></i>
-                <span class="bg-white text-blue-700 px-3 py-1 rounded-full">Data</span>
-                <i class="fas fa-chevron-right opacity-30 text-[8px]"></i>
-                <span class="opacity-50">Bayar</span>
-            </div>
-        </div>
-    </nav>
+		<nav class="sticky top-0 z-40 bg-blue-700 p-4 text-white shadow-md">
+			<div class="mx-auto flex max-w-6xl items-center justify-between px-2">
+				<div class="flex items-center gap-4">
+					<a class="rounded-lg bg-blue-600/50 p-2 transition hover:bg-blue-500" href="javascript:history.back()">
+						<i class="fas fa-arrow-left"></i>
+					</a>
+					<h1 class="text-lg font-bold">Checkout</h1>
+				</div>
+				<div class="hidden items-center gap-3 text-[10px] font-bold uppercase tracking-widest md:flex">
+					<span class="opacity-50">Pilih</span>
+					<i class="fas fa-chevron-right text-[8px] opacity-30"></i>
+					<span class="rounded-full bg-white px-3 py-1 text-blue-700">Data</span>
+					<i class="fas fa-chevron-right text-[8px] opacity-30"></i>
+					<span class="opacity-50">Bayar</span>
+				</div>
+			</div>
+		</nav>
 
-    
+		<form method="POST" action="{{ route('booking.store', $jadwal->id) }}">
 
-    <div class="max-w-6xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
-        
-        <div class="flex-1 space-y-6">
-            
-            <div class="bg-white rounded-3xl p-6 shadow-2xl border border-gray-300 ring-1 ring-gray-100 transform hover:-translate-y-1 transition-all">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <h3 class="font-black text-gray-800 uppercase text-sm tracking-wider">Informasi Kontak</h3>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nama Lengkap</label>
-                        <input type="text" x-model="bookerName" @input="updatePassenger" placeholder="Sesuai KTP/Paspor" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nomor WhatsApp</label>
-                        <input type="tel" placeholder="0812xxxx" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Email</label>
-                        <input type="email" placeholder="contoh@email.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
-                        <p class="text-[9px] text-gray-400 mt-2 italic">* E-Tiket akan dikirimkan ke email ini</p>
-                    </div>
-                </div>
-            </div>
+			@csrf
+			<input name="nomor_kursi" type="hidden" value="{{ $seat }}">
+			<div class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 lg:flex-row">
 
-            <div class="bg-white rounded-3xl p-6 shadow-2xl border border-gray-300 ring-1 ring-gray-100 transform hover:-translate-y-1 transition-all">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center text-orange-600">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h3 class="font-black text-gray-800 uppercase text-sm tracking-wider">Detail Penumpang 1</h3>
-                    </div>
-                    <label class="flex items-center cursor-pointer gap-2">
-                        <span class="text-[11px] font-bold text-gray-500 uppercase">Sama dengan pemesan?</span>
-                        <div class="relative">
-                            <input type="checkbox" x-model="sameAsBooker" @change="updatePassenger" class="sr-only">
-                            <div class="w-12 h-6 bg-gray-300 rounded-full transition-colors duration-200 ease-in-out shadow-lg" :class="sameAsBooker ? 'bg-blue-600' : 'bg-gray-300'"></div>
-                            <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out transform shadow-2xl ring-1 ring-gray-200" :class="sameAsBooker ? 'translate-x-6' : ''"></div>
-                        </div>
-                    </label>
-                </div>
+				<div class="flex-1 space-y-6">
+					<div
+						class="transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
+						<div class="mb-6 flex items-center gap-3">
+							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+								<i class="fas fa-envelope"></i>
+							</div>
+							<h3 class="text-sm font-black uppercase tracking-wider text-gray-800">Informasi Kontak</h3>
+						</div>
 
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nama Lengkap (Sesuai ID)</label>
-                        <input type="text" x-model="passengerName" :disabled="sameAsBooker" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition" :class="sameAsBooker ? 'bg-gray-100 text-gray-500' : 'bg-gray-50'">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">NIK / Nomor Paspor</label>
-                        <div class="relative">
-                            <i class="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                            <input type="text" x-model="passengerID" placeholder="Masukkan 16 digit NIK" class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+						<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+							<div>
+								<label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-gray-400">Nama Lengkap</label>
+								<input
+									class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-blue-500"
+									name="nama_pemesan" type="text" x-model="bookerName" @input="updatePassenger"
+									placeholder="Sesuai KTP/Paspor">
+							</div>
+							<div>
+								<label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-gray-400">Nomor WhatsApp</label>
+								<input
+									class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-blue-500"
+									name="whatsapp" type="tel" placeholder="0812xxxx">
+							</div>
+							<div class="md:col-span-2">
+								<label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-gray-400">Email</label>
+								<input
+									class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-blue-500"
+									name="email" type="email" placeholder="contoh@email.com">
+								<p class="mt-2 text-[9px] italic text-gray-400">* E-Tiket akan dikirimkan ke email ini</p>
+							</div>
+						</div>
+					</div>
 
-        <div class="lg:w-80">
-            <div class="bg-white rounded-3xl p-6 shadow-2xl border border-gray-300 ring-1 ring-gray-100 sticky top-24 transform hover:-translate-y-1 transition-all">
-                <h3 class="font-black text-gray-800 mb-4 uppercase text-sm">Ringkasan Pesanan</h3>
-                
-                <div class="space-y-4 mb-6">
-                    <div class="flex items-start gap-3">
-                        <i class="fas fa-bus text-blue-600 mt-1"></i>
-                        <div>
-                            <p class="text-xs font-black text-gray-800">TransExpress</p>
-                            <p class="text-[10px] text-gray-400 uppercase font-bold">Eksekutif • Kursi 5A</p>
-                        </div>
-                    </div>
-                    <div class="border-l-2 border-dashed border-gray-100 ml-2 pl-4 space-y-3">
-                        <div>
-                            <p class="text-[10px] font-black text-gray-400 uppercase">Pergi</p>
-                            <p class="text-xs font-bold text-gray-700">Jakarta (HLP)</p>
-                            <p class="text-[9px] text-gray-400">Senin, 5 Jan • 08:00</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-black text-gray-400 uppercase">Tiba</p>
-                            <p class="text-xs font-bold text-gray-700">Bandung (BDG)</p>
-                            <p class="text-[9px] text-gray-400">Senin, 5 Jan • 10:30</p>
-                        </div>
-                    </div>
-                </div>
+					<div
+						class="transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
+						<div class="mb-6 flex items-center justify-between">
+							<div class="flex items-center gap-3">
+								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-orange-50 text-orange-600">
+									<i class="fas fa-user"></i>
+								</div>
+								<h3 class="text-sm font-black uppercase tracking-wider text-gray-800">Detail Penumpang 1</h3>
+							</div>
+							<label class="flex cursor-pointer items-center gap-2">
+								<span class="text-[11px] font-bold uppercase text-gray-500">Sama dengan pemesan?</span>
+								<div class="relative">
+									<input class="sr-only" type="checkbox" x-model="sameAsBooker" @change="updatePassenger">
+									<div class="h-6 w-12 rounded-full bg-gray-300 shadow-lg transition-colors duration-200 ease-in-out"
+										:class="sameAsBooker ? 'bg-blue-600' : 'bg-gray-300'"></div>
+									<div
+										class="absolute left-1 top-1 h-4 w-4 transform rounded-full bg-white shadow-2xl ring-1 ring-gray-200 transition-transform duration-200 ease-in-out"
+										:class="sameAsBooker ? 'translate-x-6' : ''"></div>
+								</div>
+							</label>
+						</div>
 
-                <div class="border-t pt-4 space-y-2 mb-6">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-gray-500 uppercase">Total Bayar</span>
-                        <span class="text-xl font-black text-orange-500 tracking-tighter">Rp 125.000</span>
-                    </div>
-                </div>
+						<div class="space-y-4">
+							<div>
+								<label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-gray-400">Nama Lengkap (Sesuai
+									ID)</label>
+								<input
+									class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-blue-500"
+									name="nama_penumpang" type="text" x-model="passengerName" :disabled="sameAsBooker" required
+									:class="sameAsBooker ? 'bg-gray-100 text-gray-500' : 'bg-gray-50'">
+							</div>
+							<div>
+								<label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-gray-400">NIK</label>
+								<div class="relative">
+									<i class="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+									<input
+										class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-12 pr-4 text-sm outline-none transition focus:ring-2 focus:ring-blue-500"
+										name="nik" type="text" x-model="passengerID" required placeholder="Masukkan 16 digit NIK">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="lg:w-80">
+					<div
+						class="sticky top-24 transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
+						<h3 class="mb-4 text-sm font-black uppercase text-gray-800">Ringkasan Pesanan</h3>
 
-                <button class="w-full bg-blue-700 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-100 hover:bg-blue-800 transition transform active:scale-95">
-                    Lanjutkan Pembayaran
-                </button>
-                
-                <div class="mt-4 flex items-start gap-2 text-[9px] text-gray-400 leading-relaxed">
-                    <i class="fas fa-shield-alt text-green-500 mt-0.5"></i>
-                    <p>Data Anda aman dan terenkripsi. E-Tiket akan diterbitkan segera setelah pembayaran dikonfirmasi.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+						<div class="mb-6 space-y-4">
+							<div class="flex items-start gap-3">
+								<i
+									class="fas @if ($jadwal->transportasi->tipe === 'pesawat') fa-plane
+@elseif($jadwal->transportasi->tipe === 'kereta') fa-train
+@elseif($jadwal->transportasi->tipe === 'kapal') fa-ship
+@else fa-bus @endif mt-1 text-blue-600"></i>
+								<div>
+									<p class="text-xs font-black text-gray-800">{{ $jadwal->transportasi->nama_brand }}</p>
+									<p class="text-[10px] font-bold uppercase text-gray-400">{{ strtoupper($jadwal->transportasi->tipe) }} • Kursi
+										{{ $seat }}</p>
+								</div>
+							</div>
+							<div class="ml-2 space-y-3 border-l-2 border-dashed border-gray-100 pl-4">
+								<div>
+									<p class="text-[10px] font-black uppercase text-gray-400">Pergi</p>
+									<p class="text-xs font-bold text-gray-700">{{ $jadwal->asal->nama }} ({{ $jadwal->asal->kode }})</p>
+									<p class="text-[9px] text-gray-400">
+										{{ \Carbon\Carbon::parse($jadwal->waktu_berangkat)->translatedFormat('l, d M • H:i') }}</p>
+								</div>
+								<div>
+									<p class="text-[10px] font-black uppercase text-gray-400">Tiba</p>
+									<p class="text-xs font-bold text-gray-700">{{ $jadwal->tujuan->nama }} ({{ $jadwal->tujuan->kode }})</p>
+									<p class="text-[9px] text-gray-400">
+										{{ \Carbon\Carbon::parse($jadwal->waktu_tiba)->translatedFormat('l, d M • H:i') }}</p>
+								</div>
+							</div>
+						</div>
 
-</body>
+						<div class="mb-6 space-y-2 border-t pt-4">
+							<div class="flex items-center justify-between">
+								<span class="text-xs font-bold uppercase text-gray-500">Total Bayar</span>
+								<span class="text-xl font-black tracking-tighter text-orange-500">Rp
+									{{ number_format($jadwal->harga, 0, ',', '.') }}</span>
+							</div>
+						</div>
+
+						<button
+							class="w-full rounded-2xl bg-blue-700 py-4 text-xs font-black uppercase tracking-widest text-white shadow-xl transition hover:bg-blue-800"
+							type="submit">
+							Lanjutkan Pembayaran
+						</button>
+
+						<div class="mt-4 flex items-start gap-2 text-[9px] leading-relaxed text-gray-400">
+							<i class="fas fa-shield-alt mt-0.5 text-green-500"></i>
+							<p>Data Anda aman dan terenkripsi. E-Tiket akan diterbitkan segera setelah pembayaran dikonfirmasi.</p>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</form>
+
+	</body>
+
 </html>

@@ -7,7 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     protected $table = 'pemesanan';
-    protected $fillable = ['kode_booking', 'user_id', 'jadwal_id', 'nomor_kursi', 'total_harga', 'status', 'qr_code_data'];
+    protected $fillable = [
+        'kode_booking',
+        'user_id',
+        'jadwal_id',
+        'nomor_kursi',
+        'nama_penumpang',
+        'nik',
+        'total_harga',
+        'status',
+        'qr_code_data'
+    ];
 
     public function jadwal()
     {

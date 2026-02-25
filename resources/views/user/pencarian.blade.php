@@ -165,9 +165,9 @@
                                         </p>
                                         <p class="text-[9px] font-bold uppercase text-gray-400">Sudah Termasuk Pajak</p>
                                     </div>
-                                    {{-- <a class="rounded-xl bg-blue-600 px-8 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700 active:scale-95" href="{{ route('booking.create', $r->id) }}">
+                                    <a class="rounded-xl bg-blue-600 px-8 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700 active:scale-95" href="{{ route('booking.create', $r->id) }}">
                                         Pilih
-                                    </a> --}}
+                                    </a>
                                 </div>
                             </div>
 
