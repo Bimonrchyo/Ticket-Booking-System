@@ -14,12 +14,12 @@ class TransportController extends Controller
     public function index($type)
     {
         $data = Transportasi::where('tipe', $type)->get();
-        return view('admin.transportasi.index', compact('data', 'type'));
+        return view('admin.index', compact('data', 'type'));
     }
 
     public function create($type)
     {
-        return view('admin.transportasi.create', compact('type'));
+        return view('admin.create', compact('type'));
     }
 
     public function store(Request $request, $type)
@@ -48,14 +48,14 @@ class TransportController extends Controller
             $q->where('tipe', $type);
         })->with('transportasi')->get();
 
-        return view('admin.jadwal.index', compact('data', 'type'));
+        return view('admin.index', compact('data', 'type'));
     }
 
     public function createJadwal($type)
     {
         // Ambil daftar armada sesuai tipe untuk dipilih di dropdown form jadwal
         $armada = Transportasi::where('tipe', $type)->get();
-        return view('admin.jadwal.create', compact('type', 'armada'));
+        return view('admin.create', compact('type', 'armada'));
     }
 
     public function storeJadwal(Request $request, $type)

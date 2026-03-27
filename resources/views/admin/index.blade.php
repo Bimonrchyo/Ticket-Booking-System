@@ -28,13 +28,17 @@
 					<i class="fas fa-chevron-down ml-auto w-3" :class="openArmada && 'rotate-180'"></i>
 				</a>
 				<div class="ml-4 space-y-1 text-sm" x-show="openArmada">
-					<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800" href="{{ route('pesawat.index') }}">✈️
+					<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800"
+						href="{{ route('transportasi.index', 'pesawat') }}">✈️
 						Pesawat</a>
-					<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800" href="{{ route('bus.index') }}">🚌
+					<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800"
+						href="{{ route('transportasi.index', 'bus') }}">🚌
 						Bus</a>
-					<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800" href="{{ route('kereta.index') }}">🚂
+					<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800"
+						href="{{ route('transportasi.index', 'kereta') }}">🚂
 						Kereta</a>
-					<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800" href="{{ route('kapal.index') }}">⛴️
+					<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800"
+						href="{{ route('transportasi.index', 'kapal') }}">⛴️
 						Kapal</a>
 				</div>
 				<a
@@ -65,12 +69,12 @@
 		<main class="ml-64 p-8">
 			<div class="mb-8 flex items-center justify-between">
 				<div>
-					<h2 class="text-2xl font-black uppercase tracking-tighter text-slate-800">Daftar Armada</h2>
-					<p class="text-xs font-bold uppercase tracking-widest text-gray-400">Semua Unit Kendaraan HubTrans</p>
+					<h2 class="text-2xl font-black uppercase tracking-tighter text-slate-800">Daftar Armada {{ ucfirst($type) }}</h2>
+					<p class="text-xs font-bold uppercase tracking-widest text-gray-400">Semua Unit {{ ucfirst($type) }} HubTrans</p>
 				</div>
 				<a
 					class="rounded-xl bg-blue-600 px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700"
-					href="transportasi-create.php">
+					href="{{ route('transportasi.create', $type) }}">
 					+ Tambah Unit
 				</a>
 			</div>
@@ -87,36 +91,38 @@
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-gray-50 text-sm font-bold">
-						<?php
-                    $armada = [
-                        ['nama' => 'Boeing 737', 'id' => 'PK-GAA', 'moda' => 'Pesawat', 'icon' => 'fa-plane', 'kursi' => '180'],
-                        ['nama' => 'Scania K410IB', 'id' => 'HT-BUS-01', 'moda' => 'Bus', 'icon' => 'fa-bus', 'kursi' => '32'],
-                        ['nama' => 'Argo Bromo', 'id' => 'KAI-EX-01', 'moda' => 'Kereta', 'icon' => 'fa-train', 'kursi' => '50'],
-                    ];
-                    foreach($armada as $row):
-                    ?>
-						<tr class="transition hover:bg-gray-50">
-							<td class="p-6">
-								<div class="flex items-center gap-3">
-									<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600"><i
-											class="fas <?php echo $row['icon']; ?>"></i></div>
-									<div>
-										<p class="text-slate-800"><?php echo $row['nama']; ?></p>
-										<p class="text-[9px] uppercase text-gray-400"><?php echo $row['moda']; ?></p>
+						@forelse($data as $transportasi)
+							<tr class="transition hover:bg-gray-50">
+								<td class="p-6">
+									<div class="flex items-center gap-3">
+										<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+											<i
+												class="fas {{ $type === 'pesawat' ? 'fa-plane' : ($type === 'bus' ? 'fa-bus' : ($type === 'kereta' ? 'fa-train' : 'fa-ship')) }}"></i>
+										</div>
+										<div>
+											<p class="text-slate-800">{{ $transportasi->nama_brand }}</p>
+											<p class="text-[9px] uppercase text-gray-400">{{ ucfirst($type) }}</p>
+										</div>
 									</div>
-								</div>
-							</td>
-							<td class="p-6 font-mono text-gray-500"><?php echo $row['id']; ?></td>
-							<td class="p-6 text-slate-600"><?php echo $row['kursi']; ?> Kursi</td>
-							<td class="p-6"><span
-									class="rounded-full bg-green-100 px-3 py-1 text-[9px] font-black uppercase italic text-green-700">Aktif</span>
-							</td>
-							<td class="p-6 text-center">
-								<button class="mr-2 text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
-								<button class="text-red-400 hover:text-red-600"><i class="fas fa-trash-alt"></i></button>
-							</td>
-						</tr>
-						<?php endforeach; ?>
+								</td>
+								<td class="p-6 font-mono text-gray-500">{{ $transportasi->kode_identitas }}</td>
+								<td class="p-6 text-slate-600">{{ $transportasi->kapasitas }} Kursi</td>
+								<td class="p-6">
+									<span
+										class="rounded-full bg-green-100 px-3 py-1 text-[9px] font-black uppercase italic text-green-700">Aktif</span>
+								</td>
+								<td class="p-6 text-center">
+									<button class="mr-2 text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+									<button class="text-red-400 hover:text-red-600"><i class="fas fa-trash-alt"></i></button>
+								</td>
+							</tr>
+						@empty
+							<tr>
+								<td class="p-6 text-center text-gray-400" colspan="5">
+									Belum ada data {{ ucfirst($type) }}
+								</td>
+							</tr>
+						@endforelse
 					</tbody>
 				</table>
 			</div>

@@ -98,52 +98,73 @@ class BookingController extends Controller
             ]);
         } else {
             $booking->payment()->create([
-                'metode' => 'transfer',
+                'metode_bayar' => 'transfer',
                 'bukti_transfer' => $path,
-                'status' => 'uploaded'
+                'status' => 'uploaded',
+                'nominal_bayar' => $booking->total_harga
             ]);
         }
 
         return back()->with('success', 'Bukti berhasil diupload.');
 
     }
-    public function konfirmasiPembayaran(Booking $booking)
-    {
-        abort_if($booking->user_id !== Auth::id(), 403);
+public function konfirmasiPembayaran(Request $request, $id)
+{
+    $request->validate([
+        'bukti_transfer' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-        $payment = $booking->payment;
+    $booking = Booking::findOrFail($id);
 
-        if (! $payment || $payment->status !== 'uploaded') {
-            return back()->with('error', 'Upload bukti dulu.');
-        }
+    if ($request->hasFile('bukti_transfer')) {
+        $path = $request->file('bukti_transfer')->store('bukti_pembayaran', 'public');
 
-        $payment->update([
-            'status' => 'verified',
-            'verified_at' => now(),
-            'payment_time' => now(),
-            'nominal_bayar' => $booking->total_harga,
+        // Simpan ke tabel payment atau update status booking
+        $booking->update([
+            'status' => 'pending_verification' // atau status lain sesuai alur Anda
         ]);
 
-        $booking->update(['status' => 'paid']);
-
-        return redirect()->route('history')
-            ->with('success', 'Pembayaran berhasil dikonfirmasi.');
-
+        // Simpan info pembayaran
+        $booking->payment()->updateOrCreate(
+            ['booking_id' => $booking->id],
+            [
+                'bukti_transfer' => $path,
+                'status' => 'paid'
+            ]
+        );
     }
+
+    return redirect()->route('pembayaran.sukses')->with('success', 'Bukti berhasil dikirim!');
+}
     // 4. Halaman Pembayaran (Instruksi Upload Bukti)
-    public function payment(Booking $booking)
-    {
-        abort_if($booking->user_id !== Auth::id(), 403);
+public function payment(Booking $booking)
+{
+    abort_if($booking->user_id !== Auth::id(), 403);
 
-        $booking->load('jadwal.transportasi');
+    $booking->load(['jadwal.transportasi', 'payment']);
 
-        return view('user.pembayaran', compact('booking'));
+    // Jika belum ada expired_at, buat baru (30 menit dari sekarang)
+    if (!$booking->expired_at) {
+        $booking->expired_at = now()->addMinutes(30);
+        $booking->saveQuietly();
     }
+
+    // Hitung sisa waktu: expired_at dikurangi waktu sekarang
+    // diffInSeconds dengan parameter kedua 'false' agar menghasilkan angka negatif jika sudah lewat
+    $timeLeft = now()->diffInSeconds($booking->expired_at, false);
+
+    // Jika sudah lewat (negatif), set jadi 0
+    $timeLeft = $timeLeft > 0 ? $timeLeft : 0;
+
+    return view('user.pembayaran', compact('booking', 'timeLeft'));
+}
     // Histori Pemesanan User
     public function history()
     {
         $histori = Booking::where('user_id', Auth::id())
-            ->with('jadwal.transportasi')
+            ->with(['jadwal' => function ($q) {
+                $q->with(['transportasi', 'asal', 'tujuan']);
+            }])
             ->latest()
             ->get();
 

@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     protected $table = 'pemesanan';
+
+    protected $casts = [
+        'expired_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     protected $fillable = [
         'kode_booking',
         'user_id',
@@ -16,7 +23,8 @@ class Booking extends Model
         'nik',
         'total_harga',
         'status',
-        'qr_code_data'
+        'qr_code_data',
+        'expired_at'
     ];
 
     public function jadwal()

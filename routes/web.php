@@ -18,7 +18,7 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // --- FORGOT PASSWORD ---
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
@@ -42,7 +42,8 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
 // --- USER ROLE (Pelanggan) ---
 Route::middleware(['auth', 'role:user'])->group(function () {
 
-    Route::get('/home', [HomeController::class, 'index']);
+    Route::get('/home', [HomeController::class, 'index'])
+        ->name('home');
 
     Route::get('/pencarian', [SearchController::class, 'index'])
         ->name('pencarian');
@@ -79,10 +80,10 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 Route::middleware(['auth', 'role:admin,superadmin'])->prefix('admin')->group(function () {
 
     // 1. Kelola Armada (Bus, Pesawat, dll)
-    // Menggunakan resource agar hemat baris untuk Index, Create, Store, Edit, Delete
-    Route::resource('/transportasi/{type}', TransportController::class)->parameters([
-        '{type}' => 'transportasi' // Mengamankan parameter agar tidak bentrok
-    ]);
+    // Manual routes karena kita butuh parameter type saja, bukan resource ID
+    Route::get('/transportasi/{type}', [TransportController::class, 'index'])->name('transportasi.index');
+    Route::get('/transportasi/{type}/create', [TransportController::class, 'create'])->name('transportasi.create');
+    Route::post('/transportasi/{type}', [TransportController::class, 'store'])->name('transportasi.store');
 
     // 2. Kelola Jadwal (Manual Route)
     // Karena kita butuh method khusus 'storeJadwal'

@@ -119,9 +119,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->enum('status', [
                 'unpaid',
-                'uploaded',
-                'verified',
-                'rejected'
+                'paid',
             ])->default('unpaid');
             $table->string('metode_bayar');
             $table->string('bukti_transfer')->nullable();

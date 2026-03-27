@@ -13,7 +13,7 @@ class SuperAdminController extends Controller
     public function index()
     {
         $admins = User::where('role', 'admin')->get();
-        return view('superadmin.kelola-admin.index', compact('admins'));
+        return view('superadmin.daftar_admin', compact('admins'));
     }
 
     // Halaman tambah admin (tambah_admin.blade.php)
@@ -64,6 +64,6 @@ class SuperAdminController extends Controller
             ->groupBy('transportasi.tipe')
             ->get();
 
-        return view('superadmin.laporan-global', compact('totalPendapatan', 'laporanPerModa'));
+        return view('superadmin.laporan_global', compact('totalPendapatan', 'laporanPerModa'));
     }
 }

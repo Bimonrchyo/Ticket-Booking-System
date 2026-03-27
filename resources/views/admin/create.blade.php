@@ -10,7 +10,7 @@
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	</head>
 
-	<body class="bg-gray-50 font-sans" x-data="{ moda: 'pesawat', openArmada: false, openJadwal: false }">
+	<body class="bg-gray-50 font-sans" x-data="{ moda: '{{ $type }}', openArmada: false, openJadwal: false }">
 
 
 
@@ -34,13 +34,17 @@
 						<i class="fas fa-chevron-down ml-auto w-3" :class="openArmada && 'rotate-180'"></i>
 					</a>
 					<div class="ml-4 space-y-1 text-sm" x-show="openArmada">
-						<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800" href="{{ route('pesawat.index') }}">✈️
+						<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800"
+							href="{{ route('transportasi.index', 'pesawat') }}">✈️
 							Pesawat</a>
-						<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800" href="{{ route('bus.index') }}">🚌
+						<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800"
+							href="{{ route('transportasi.index', 'bus') }}">🚌
 							Bus</a>
-						<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800" href="{{ route('kereta.index') }}">🚂
+						<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800"
+							href="{{ route('transportasi.index', 'kereta') }}">🚂
 							Kereta</a>
-						<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800" href="{{ route('kapal.index') }}">⛴️
+						<a class="block rounded-lg px-4 py-2 text-xs transition hover:bg-slate-800"
+							href="{{ route('transportasi.index', 'kapal') }}">⛴️
 							Kapal</a>
 					</div>
 					<a
@@ -71,12 +75,15 @@
 			<main class="flex-1 p-8 lg:ml-64">
 				<div class="mx-auto max-w-4xl">
 					<header class="mb-8">
-						<h2 class="text-2xl font-black uppercase tracking-tighter text-slate-800">Tambah Unit Armada</h2>
-						<p class="text-sm font-bold uppercase tracking-widest text-gray-400">Input spesifikasi detail kendaraan</p>
+						<h2 class="text-2xl font-black uppercase tracking-tighter text-slate-800">Tambah Unit Armada {{ ucfirst($type) }}
+						</h2>
+						<p class="text-sm font-bold uppercase tracking-widest text-gray-400">Input spesifikasi detail kendaraan
+							{{ ucfirst($type) }}</p>
 					</header>
 
 					<form class="rounded-[2.5rem] border border-gray-100 bg-white p-10 shadow-xl shadow-gray-200/50"
-						action="proses-tambah.php" method="POST">
+						action="{{ route('transportasi.store', $type) }}" method="POST">
+						@csrf
 
 						<div class="mb-10">
 							<label class="mb-4 block text-[11px] font-black uppercase tracking-[0.2em] text-gray-400">Jenis Moda
@@ -107,18 +114,17 @@
 						<div class="mb-10 grid grid-cols-1 gap-8 md:grid-cols-2">
 							<div class="space-y-6">
 								<div>
-									<label class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Nama Unit /
+									<label class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Nama Brand /
 										Maskapai</label>
 									<input
 										class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
-										name="nama_unit" type="text" placeholder="Contoh: Garuda Indonesia / TransExpress">
+										name="nama_brand" type="text" placeholder="Contoh: Garuda Indonesia / TransExpress" required>
 								</div>
 								<div>
-									<label class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Kode / Nomor
-										Registrasi</label>
+									<label class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Kode Identitas</label>
 									<input
 										class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold uppercase text-blue-600 outline-none transition focus:ring-2 focus:ring-blue-500"
-										name="kode_unit" type="text" placeholder="Contoh: PK-GAA / B 1234 TGC">
+										name="kode_identitas" type="text" placeholder="Contoh: PK-GAA / B 1234 TGC" required>
 								</div>
 							</div>
 
