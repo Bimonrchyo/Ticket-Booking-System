@@ -117,13 +117,14 @@ class BookingController extends Controller
             return back()->with('error', 'Upload bukti dulu.');
         }
 
-        $booking->payment()->create([
-            'metode_bayar' => 'transfer',
-            'bukti_transfer' => $path,
-            'status' => 'uploaded',
+        $payment->update([
+            'status' => 'verified',
+            'verified_at' => now(),
+            'payment_time' => now(),
             'nominal_bayar' => $booking->total_harga,
-            'payment_time' => now()
         ]);
+
+        $booking->update(['status' => 'paid']);
 
         return redirect()->route('history')
             ->with('success', 'Pembayaran berhasil dikonfirmasi.');
@@ -151,7 +152,7 @@ class BookingController extends Controller
     // Proses Cetak Tiket ke PDF
     public function printTicket(Booking $booking)
     {
-        abort_if($booking->user_id !== auth()->id(), 403);
+        abort_if($booking->user_id !== Auth::id(), 403);
         abort_if($booking->status !== 'paid', 403);
 
         $booking->load(['jadwal.transportasi', 'user']);

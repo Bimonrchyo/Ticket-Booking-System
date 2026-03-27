@@ -6,6 +6,7 @@ use App\Models\Jadwal;
 use App\Models\Lokasi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller
 {
@@ -82,6 +83,8 @@ class SearchController extends Controller
         $active_moda = $moda;
 
         $selectedOperators = $request->query('operator');
+        $departureTime = $request->query('departure_time'); // time range: 00-06, 06-12, 12-18, 18-24
+        $sortBy = $request->query('sort_by', 'harga'); // harga (termurah) atau durasi (tercepat)
 
         $query = Jadwal::with(['transportasi', 'asal', 'tujuan'])
             ->when($asal, fn ($q) => $q->where('asal_id', $asal))
@@ -93,11 +96,42 @@ class SearchController extends Controller
                 $q->where('tipe', $moda)
             );
 
+        // Operator filter
         $query->when($selectedOperators, function ($q) use ($selectedOperators) {
             $q->whereHas('transportasi', function ($sub) use ($selectedOperators) {
                 $sub->whereIn('nama_brand', $selectedOperators);
             });
         });
+
+        // Departure time filter
+        if ($departureTime) {
+            $times = explode('-', $departureTime);
+            if (count($times) == 2) {
+                $startHour = intval($times[0]);
+                $endHour = intval($times[1]);
+
+                $driver = DB::connection()->getDriverName();
+                if ($driver === 'sqlite') {
+                    $query->whereRaw("CAST(strftime('%H', waktu_berangkat) AS INTEGER) >= ? AND CAST(strftime('%H', waktu_berangkat) AS INTEGER) < ?", [$startHour, $endHour]);
+                } else {
+                    $query->whereRaw("HOUR(waktu_berangkat) >= ? AND HOUR(waktu_berangkat) < ?", [$startHour, $endHour]);
+                }
+            }
+        }
+
+        // Sorting
+        if ($sortBy === 'durasi') {
+            $driver = DB::connection()->getDriverName();
+            if ($driver === 'sqlite') {
+                // SQLite: calculate duration in seconds and divide by 3600 for hours
+                $query->orderByRaw('(julianday(waktu_tiba) - julianday(waktu_berangkat)) * 24');
+            } else {
+                // MySQL
+                $query->orderByRaw('(TIME_TO_SEC(TIMEDIFF(waktu_tiba, waktu_berangkat)) / 3600)');
+            }
+        } else {
+            $query->orderBy('harga');
+        }
 
         $results = $query->get();
 
@@ -116,7 +150,10 @@ class SearchController extends Controller
             'operators',
             'results',
             'modaIcon',
-            'operatorLabel'
+            'operatorLabel',
+            'departureTime',
+            'sortBy',
+            'selectedOperators'
         ));
     }
 }

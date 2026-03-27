@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Jadwal;
 use App\Models\Lokasi;
 use Illuminate\Http\Request;
 
@@ -26,10 +27,18 @@ class HomeController extends Controller
 
         $lokasis = Lokasi::orderBy('nama')->get();
 
+        // Ambil jadwal populer (paling banyak booking)
+        $popularRoutes = Jadwal::with(['transportasi', 'asal', 'tujuan'])
+            ->withCount('bookings')
+            ->orderByDesc('bookings_count')
+            ->limit(3)
+            ->get();
+
         return view('user.home', [
             'modas' => $modas,
             'active_moda' => $activeModa,
-            'lokasis' => $lokasis
+            'lokasis' => $lokasis,
+            'popularRoutes' => $popularRoutes
         ]);
     }
 }

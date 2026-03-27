@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
                 'nama' => 'Super Admin',
                 'email' => 'superadmin@mail.com',
                 'password' => Hash::make('password'),
-                'role' => 'superAdmin',
+                'role' => 'superadmin',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

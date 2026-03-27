@@ -16,6 +16,22 @@ class SuperAdminController extends Controller
         return view('superadmin.kelola-admin.index', compact('admins'));
     }
 
+    // Halaman tambah admin (tambah_admin.blade.php)
+    public function create()
+    {
+        return view('superadmin.tambah_admin');
+    }
+
+    // Superadmin dashboard
+    public function dashboard()
+    {
+        $totalUsers = User::where('role', 'user')->count();
+        $totalBookings = Booking::count();
+        $totalIncome = Booking::where('status', 'paid')->sum('total_harga');
+
+        return view('superadmin.laporan_global', compact('totalUsers', 'totalBookings', 'totalIncome'));
+    }
+
     // Tambah Admin Baru
     public function store(Request $request)
     {
@@ -41,10 +57,10 @@ class SuperAdminController extends Controller
         $totalPendapatan = Booking::where('status', 'paid')->sum('total_harga');
 
         // Break down per kategori transportasi
-        $laporanPerModa = Booking::join('jadwal', 'bookings.jadwal_id', '=', 'jadwal.id')
+        $laporanPerModa = Booking::join('jadwal', 'pemesanan.jadwal_id', '=', 'jadwal.id')
             ->join('transportasi', 'jadwal.transportasi_id', '=', 'transportasi.id')
-            ->where('bookings.status', 'paid')
-            ->selectRaw('transportasi.tipe, SUM(bookings.total_harga) as total')
+            ->where('pemesanan.status', 'paid')
+            ->selectRaw('transportasi.tipe, SUM(pemesanan.total_harga) as total')
             ->groupBy('transportasi.tipe')
             ->get();
 

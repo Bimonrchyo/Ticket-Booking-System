@@ -74,12 +74,25 @@ class TransportController extends Controller
 
     // --- BAGIAN PEMBAYARAN ---
 
+    public function dashboard()
+    {
+        $totalPending = Booking::where('status', 'pending')->count();
+        $totalPaid = Booking::where('status', 'paid')->count();
+        $totalRevenue = Booking::where('status', 'paid')->sum('total_harga');
+
+        return view('admin.dashboard', compact('totalPending', 'totalPaid', 'totalRevenue'));
+    }
+
     public function listPayments()
     {
-        $payments = Booking::with(['user', 'jadwal.transportasi'])
-            ->where('status', 'pending')
+        $payments = Booking::with(['user', 'jadwal.transportasi', 'payment'])
+            ->whereHas('payment', function ($q) {
+                $q->where('status', '!=', 'verified');
+            })
+            ->orderByDesc('created_at')
             ->get();
-        return view('admin.pembayaran.index', compact('payments'));
+
+        return view('admin.verifikasi', compact('payments'));
     }
 
     public function approvePayment($id)

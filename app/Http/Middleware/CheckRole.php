@@ -29,11 +29,14 @@ class CheckRole
             return $next($request);
         }
 
-        // 4. Jika tidak punya akses, arahkan kembali sesuai role masing-masing
-        if ($userRole == 'superadmin')
+        // 4. Jika tidak punya akses, arahkan kembali sesuai role masing-masing (case-insensitive)
+        $normalized = strtolower($userRole);
+        if ($normalized === 'superadmin') {
             return redirect('/super/dashboard');
-        if ($userRole == 'admin')
+        }
+        if ($normalized === 'admin') {
             return redirect('/admin/dashboard');
+        }
 
         return redirect('/home')->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
     }

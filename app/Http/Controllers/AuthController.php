@@ -47,11 +47,14 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Redirect berdasarkan role
-            if (Auth::user()->role == 'superadmin')
+            // Redirect berdasarkan role (case-insensitive)
+            $role = strtolower(Auth::user()->role);
+            if ($role === 'superadmin') {
                 return redirect('/super/dashboard');
-            if (Auth::user()->role == 'admin')
+            }
+            if ($role === 'admin') {
                 return redirect('/admin/dashboard');
+            }
             return redirect('/home');
         }
 

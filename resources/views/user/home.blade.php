@@ -114,20 +114,46 @@
 					Rekomendasi Rute Terpopuler
 				</h2>
 				<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-					<?php for($i=1; $i<=3; $i++): ?>
-					<div class="overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md">
-						<img class="h-40 w-full object-cover" src="https://picsum.photos/400/200" alt="Destination">
-						<div class="p-4">
-							<p class="text-xs font-bold uppercase text-blue-600">Favorit Travelers</p>
-							<h3 class="text-lg font-bold text-gray-800">Jakarta → Bali</h3>
-							<p class="mb-4 text-sm text-gray-500">Mulai dari <span class="text-lg font-bold text-orange-500">Rp
-									850.000</span></p>
-							<button
-								class="w-full rounded-lg border border-blue-600 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50">Cek
-								Jadwal</button>
+					@forelse ($popularRoutes as $route)
+						<div class="overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md">
+							<div class="flex h-40 w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+								<div class="text-center">
+									<i
+										class="fas {{ $route->transportasi->tipe == 'pesawat' ? 'fa-plane' : ($route->transportasi->tipe == 'bus' ? 'fa-bus' : ($route->transportasi->tipe == 'kereta' ? 'fa-train' : 'fa-ship')) }} text-4xl opacity-30"></i>
+									<p class="mt-2 text-xs font-bold uppercase tracking-widest">{{ ucfirst($route->transportasi->tipe) }}</p>
+								</div>
+							</div>
+							<div class="p-4">
+								<p class="text-xs font-bold uppercase text-blue-600"><i class="fas fa-heart mr-1 text-orange-500"></i>Favorit
+									Travelers</p>
+								<h3 class="text-lg font-bold text-gray-800">{{ $route->asal->nama ?? 'N/A' }} →
+									{{ $route->tujuan->nama ?? 'N/A' }}</h3>
+								<p class="mb-4 text-sm text-gray-500">Mulai dari <span class="text-lg font-bold text-orange-500">Rp
+										{{ number_format($route->harga, 0, ',', '.') }}</span></p>
+								<a
+									class="inline-block w-full rounded-lg border border-blue-600 py-2 text-center text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+									href="{{ route('pencarian', ['asal' => $route->asal_id, 'tujuan' => $route->tujuan_id, 'moda' => $route->transportasi->tipe]) }}">
+									Cek Jadwal
+								</a>
+							</div>
 						</div>
-					</div>
-					<?php endfor; ?>
+					@empty
+						@for ($i = 1; $i <= 3; $i++)
+							<div class="overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md">
+								<img class="h-40 w-full object-cover" src="https://picsum.photos/400/200?random={{ $i }}"
+									alt="Destination">
+								<div class="p-4">
+									<p class="text-xs font-bold uppercase text-blue-600">Favorit Travelers</p>
+									<h3 class="text-lg font-bold text-gray-800">Rute Populer {{ $i }}</h3>
+									<p class="mb-4 text-sm text-gray-500">Mulai dari <span class="text-lg font-bold text-orange-500">Rp
+											250.000</span></p>
+									<button
+										class="w-full rounded-lg border border-blue-600 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50">Cek
+										Jadwal</button>
+								</div>
+							</div>
+						@endfor
+					@endforelse
 				</div>
 			</section>
 		</main>

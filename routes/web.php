@@ -2,10 +2,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TransportController;
 use App\Http\Controllers\SuperAdminController;
+
+// --- PUBLIC ---
+Route::get('/', function () {
+    return view('auth.login');
+});
 
 // --- AUTH ---
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -13,6 +19,25 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout']);
+
+// --- FORGOT PASSWORD ---
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendReset'])->name('password.email');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.reset');
+
+// --- DASHBOARD REDIRECTS ---
+Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
+    Route::get('/admin/dashboard', [TransportController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/dashboard', [TransportController::class, 'dashboard'])->name('shared.dashboard');
+});
+
+Route::middleware(['auth', 'role:superadmin'])->group(function () {
+    Route::get('/super/dashboard', [SuperAdminController::class, 'dashboard'])->name('super.dashboard');
+    Route::get('/laporan', [SuperAdminController::class, 'report'])->name('super.laporan');
+    Route::get('/daftar', [SuperAdminController::class, 'index'])->name('super.daftar');
+    Route::get('/tambah', [SuperAdminController::class, 'create'])->name('super.tambah');
+});
 
 // --- USER ROLE (Pelanggan) ---
 Route::middleware(['auth', 'role:user'])->group(function () {
