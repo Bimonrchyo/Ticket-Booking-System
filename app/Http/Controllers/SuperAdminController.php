@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Booking;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class SuperAdminController extends Controller
