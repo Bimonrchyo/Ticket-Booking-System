@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Booking;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,8 +13,30 @@ class SuperAdminController extends Controller
     // Menampilkan daftar Admin
     public function index()
     {
-        $admins = User::where('role', 'admin')->get();
+        $admins = User::where('role', 'admin')->with('company')->get();
         return view('superadmin.daftar_admin', compact('admins'));
+    }
+
+    public function companyRequests()
+    {
+        $companies = Company::with('users')->where('status', 'pending')->get();
+        return view('superadmin.company_requests', compact('companies'));
+    }
+
+    public function approveCompany(Company $company)
+    {
+        $company->update(['status' => 'approved']);
+        $company->users()->where('role', 'admin')->update(['status' => 'active']);
+
+        return back()->with('success', 'Perusahaan disetujui dan admin diaktifkan.');
+    }
+
+    public function rejectCompany(Company $company)
+    {
+        $company->update(['status' => 'rejected']);
+        $company->users()->where('role', 'admin')->update(['status' => 'rejected']);
+
+        return back()->with('success', 'Perusahaan ditolak dan admin ditolak.');
     }
 
     // Halaman tambah admin (tambah_admin.blade.php)
@@ -46,6 +69,7 @@ class SuperAdminController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'admin',
+            'status' => 'active',
         ]);
 
         return redirect()->back()->with('success', 'Admin baru berhasil didaftarkan');

@@ -89,75 +89,85 @@ class BookingController extends Controller
 
         $path = $request->file('bukti_transfer')->store('bukti-transfer', 'public');
 
+        // Tetapkan status payment ke pending, status booking tetap pending sampai diverifikasi admin
+        $booking->update(['status' => 'pending']);
+
         $payment = $booking->payment;
 
+        $data = [
+            'metode_bayar' => 'transfer',
+            'bukti_transfer' => $path,
+            'nominal_bayar' => $booking->total_harga,
+            'status' => 'pending',
+            'payment_time' => now(),
+            'verified_at' => null,
+        ];
+
         if ($payment) {
-            $payment->update([
-                'bukti_transfer' => $path,
-                'status' => 'uploaded'
-            ]);
+            $payment->update($data);
         } else {
-            $booking->payment()->create([
-                'metode_bayar' => 'transfer',
-                'bukti_transfer' => $path,
-                'status' => 'uploaded',
-                'nominal_bayar' => $booking->total_harga
-            ]);
+            $booking->payment()->create($data);
         }
 
-        return back()->with('success', 'Bukti berhasil diupload.');
-
+        return back()->with('success', 'Bukti berhasil diupload. Menunggu verifikasi admin.');
     }
-public function konfirmasiPembayaran(Request $request, $id)
-{
-    $request->validate([
-        'bukti_transfer' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-    ]);
 
-    $booking = Booking::findOrFail($id);
-
-    if ($request->hasFile('bukti_transfer')) {
-        $path = $request->file('bukti_transfer')->store('bukti_pembayaran', 'public');
-
-        // Simpan ke tabel payment atau update status booking
-        $booking->update([
-            'status' => 'pending_verification' // atau status lain sesuai alur Anda
+    public function konfirmasiPembayaran(Request $request, $id)
+    {
+        $request->validate([
+            'bukti_transfer' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        // Simpan info pembayaran
-        $booking->payment()->updateOrCreate(
-            ['booking_id' => $booking->id],
-            [
-                'bukti_transfer' => $path,
-                'status' => 'paid'
-            ]
-        );
-    }
+        $booking = Booking::findOrFail($id);
 
-    return redirect()->route('pembayaran.sukses')->with('success', 'Bukti berhasil dikirim!');
-}
+        if ($request->hasFile('bukti_transfer')) {
+            $path = $request->file('bukti_transfer')->store('bukti_pembayaran', 'public');
+
+            $booking->update(['status' => 'pending']);
+
+            $booking->payment()->updateOrCreate(
+                ['pemesanan_id' => $booking->id],
+                [
+                    'metode_bayar' => 'transfer',
+                    'bukti_transfer' => $path,
+                    'nominal_bayar' => $booking->total_harga,
+                    'status' => 'pending',
+                    'payment_time' => now(),
+                    'verified_at' => null,
+                ]
+            );
+        }
+
+        return redirect()->route('pembayaran.sukses')->with('success', 'Bukti berhasil dikirim! Menunggu verifikasi admin.');
+    }
     // 4. Halaman Pembayaran (Instruksi Upload Bukti)
-public function payment(Booking $booking)
-{
-    abort_if($booking->user_id !== Auth::id(), 403);
+    public function payment(Booking $booking)
+    {
+        abort_if($booking->user_id !== Auth::id(), 403);
 
-    $booking->load(['jadwal.transportasi', 'payment']);
+        $booking->load(['jadwal.transportasi', 'payment']);
 
-    // Jika belum ada expired_at, buat baru (30 menit dari sekarang)
-    if (!$booking->expired_at) {
-        $booking->expired_at = now()->addMinutes(30);
-        $booking->saveQuietly();
+        // Jika belum ada expired_at, buat baru (30 menit dari sekarang)
+        if (! $booking->expired_at) {
+            $booking->expired_at = now()->addMinutes(30);
+            $booking->saveQuietly();
+        }
+
+        // Hitung sisa waktu: expired_at dikurangi waktu sekarang
+        // diffInSeconds dengan parameter kedua 'false' agar menghasilkan angka negatif jika sudah lewat
+        $timeLeft = now()->diffInSeconds($booking->expired_at, false);
+
+        // Jika sudah lewat (negatif), set jadi 0
+        $timeLeft = $timeLeft > 0 ? $timeLeft : 0;
+
+        return view('user.pembayaran', compact('booking', 'timeLeft'));
     }
 
-    // Hitung sisa waktu: expired_at dikurangi waktu sekarang
-    // diffInSeconds dengan parameter kedua 'false' agar menghasilkan angka negatif jika sudah lewat
-    $timeLeft = now()->diffInSeconds($booking->expired_at, false);
+    public function paymentSuccess()
+    {
+        return view('user.pembayaran-sukses');
+    }
 
-    // Jika sudah lewat (negatif), set jadi 0
-    $timeLeft = $timeLeft > 0 ? $timeLeft : 0;
-
-    return view('user.pembayaran', compact('booking', 'timeLeft'));
-}
     // Histori Pemesanan User
     public function history()
     {
@@ -170,6 +180,33 @@ public function payment(Booking $booking)
 
         return view('user.riwayat', compact('histori'));
     }
+
+    public function retryPayment(Booking $booking)
+    {
+        abort_if($booking->user_id !== Auth::id(), 403);
+
+        // Hanya bisa diulang pada status rejected atau unpaid
+        if (! in_array($booking->status, ['pending', 'canceled', 'rejected'])) {
+            return redirect()->back()->with('error', 'Hanya pesanan dengan status pending/rejected/canceled dapat diulang pembayaran.');
+        }
+
+        $booking->update(['status' => 'pending']);
+
+        if ($booking->payment) {
+            $booking->payment->update(['status' => 'pending']);
+        } else {
+            $booking->payment()->create([
+                'status' => 'pending',
+                'metode_bayar' => 'transfer',
+                'nominal_bayar' => $booking->total_harga,
+                'payment_time' => now(),
+            ]);
+        }
+
+        return redirect()->route('pembayaran', $booking->id)
+            ->with('success', 'Pembayaran diulang. Silakan upload bukti lagi untuk diverifikasi.');
+    }
+
     // Proses Cetak Tiket ke PDF
     public function printTicket(Booking $booking)
     {

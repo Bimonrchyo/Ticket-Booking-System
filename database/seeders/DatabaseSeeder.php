@@ -12,6 +12,19 @@ class DatabaseSeeder extends Seeder
     {
         $now = now();
 
+        // COMPANIES
+        DB::table('companies')->insert([
+            [
+                'id' => 1,
+                'name' => 'Default Transport Company',
+                'slug' => 'default-transport-company',
+                'address' => 'Head Office, Jakarta',
+                'status' => 'approved',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
+
         // USERS
         DB::table('users')->insert([
             [
@@ -20,6 +33,8 @@ class DatabaseSeeder extends Seeder
                 'email' => 'superadmin@mail.com',
                 'password' => Hash::make('password'),
                 'role' => 'superadmin',
+                'company_id' => null,
+                'status' => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -29,6 +44,8 @@ class DatabaseSeeder extends Seeder
                 'email' => 'admin@mail.com',
                 'password' => Hash::make('password'),
                 'role' => 'admin',
+                'company_id' => 1,
+                'status' => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -38,6 +55,8 @@ class DatabaseSeeder extends Seeder
                 'email' => 'user@mail.com',
                 'password' => Hash::make('password'),
                 'role' => 'user',
+                'company_id' => null,
+                'status' => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -47,6 +66,8 @@ class DatabaseSeeder extends Seeder
                 'email' => 'user2@mail.com',
                 'password' => Hash::make('password'),
                 'role' => 'user',
+                'company_id' => null,
+                'status' => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -70,6 +91,7 @@ class DatabaseSeeder extends Seeder
                 'kode_identitas' => 'KA-EX-01',
                 'kapasitas' => 200,
                 'user_id' => 2,
+                'fasilitas' => json_encode(['ac', 'makan', 'usb']),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -80,6 +102,8 @@ class DatabaseSeeder extends Seeder
                 'kode_identitas' => 'GA-737',
                 'kapasitas' => 180,
                 'user_id' => 2,
+
+                'fasilitas' => json_encode(['ac', 'makan', 'usb']),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -90,6 +114,7 @@ class DatabaseSeeder extends Seeder
                 'kode_identitas' => 'BUS-HT-01',
                 'kapasitas' => 50,
                 'user_id' => 2,
+                'fasilitas' => json_encode(['ac', 'makan', 'usb']),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -178,6 +203,7 @@ class DatabaseSeeder extends Seeder
                 'metode_bayar' => 'transfer',
                 'bukti_transfer' => 'bukti_001.jpg',
                 'nominal_bayar' => 250000,
+                'status' => 'paid',
                 'payment_time' => $now,
                 'verified_at' => $now,
                 'created_at' => $now,

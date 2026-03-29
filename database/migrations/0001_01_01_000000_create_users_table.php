@@ -61,7 +61,7 @@ return new class extends Migration
             $table->string('nama_brand');
             $table->string('kode_identitas');
             $table->integer('kapasitas');
-
+            $table->text('fasilitas')->nullable();
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
@@ -119,7 +119,9 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->enum('status', [
                 'unpaid',
+                'pending',
                 'paid',
+                'rejected',
             ])->default('unpaid');
             $table->string('metode_bayar');
             $table->string('bukti_transfer')->nullable();

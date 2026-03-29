@@ -21,7 +21,9 @@ class User extends Authenticatable
         'nama',
         'email',
         'password',
-        'role'
+        'role',
+        'company_id',
+        'status',
     ];
 
     /**
@@ -45,5 +47,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin'
+            && $this->status === 'active'
+            && ($this->company_id === null || optional($this->company)->status === 'approved');
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'superadmin';
     }
 }

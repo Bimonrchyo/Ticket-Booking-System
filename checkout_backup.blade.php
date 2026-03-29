@@ -1,16 +1,16 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Checkout | HubTrans')
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Checkout - Detail Penumpang | HubTrans</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	</head>
 
-@push('scripts')
-	<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-@endpush
-
-@section('nav-links')
-@endsection
-
-@section('content')
-	<div class="bg-gray-50 font-sans" x-data="{
+	<body class="bg-gray-50 font-sans" x-data="{
     sameAsBooker: false,
     bookerName: '',
     passengerName: '',
@@ -41,6 +41,7 @@
 		</nav>
 
 		<form method="POST" action="{{ route('booking.store', $jadwal->id) }}">
+
 			@csrf
 			<input name="nomor_kursi" type="hidden" value="{{ $seat }}">
 			<div class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 lg:flex-row">
@@ -180,5 +181,6 @@
 			</div>
 		</form>
 
-	</div>
-@endsection
+	</body>
+
+</html>

@@ -1,15 +1,15 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Detail Jadwal | HubTrans')
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Detail Perjalanan & Pilih Kursi - HubTrans</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	</head>
 
-@push('scripts')
-	<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-@endpush
-
-@section('nav-links')
-@endsection
-
-@section('content')
 	@php
 		use Carbon\Carbon;
 
@@ -28,7 +28,7 @@
 		$bookedSeats = optional($jadwal->bookings)->pluck('nomor_kursi')->toArray() ?? [];
 	@endphp
 
-	<div class="bg-gray-50 font-sans" x-data="{
+	<body class="bg-gray-50 font-sans" x-data="{
     selectedSeat: null,
     bookedSeats: @js($bookedSeats),
     selectSeat(seat) {
@@ -69,30 +69,50 @@
 					<div class="mt-6 grid grid-cols-2 gap-4">
 						<div>
 							<p class="text-xs text-gray-400">Berangkat</p>
-							<p class="font-bold text-gray-800">{{ $berangkat->format('d M Y') }}</p>
-							<p class="text-sm text-gray-600">{{ $berangkat->format('H:i') }}</p>
+							<p class="font-bold text-gray-800">
+								{{ $berangkat->format('d M Y') }}
+							</p>
+							<p class="text-sm text-gray-600">
+								{{ $berangkat->format('H:i') }}
+							</p>
 						</div>
+
 						<div>
 							<p class="text-xs text-gray-400">Tiba</p>
-							<p class="font-bold text-gray-800">{{ $tiba->format('d M Y') }}</p>
-							<p class="text-sm text-gray-600">{{ $tiba->format('H:i') }}</p>
+							<p class="font-bold text-gray-800">
+								{{ $tiba->format('d M Y') }}
+							</p>
+							<p class="text-sm text-gray-600">
+								{{ $tiba->format('H:i') }}
+							</p>
 						</div>
 					</div>
 
-					<p class="mt-3 text-xs text-gray-500">Durasi {{ $durasi->h }} jam {{ $durasi->i }} menit</p>
+					<p class="mt-3 text-xs text-gray-500">
+						Durasi {{ $durasi->h }} jam {{ $durasi->i }} menit
+					</p>
 
 					<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-						@if ($jadwal->transportasi->fasilitas)
-							@foreach ($jadwal->transportasi->fasilitas as $f)
-								<div class="rounded-2xl bg-gray-50 p-4 text-center">
-									<i class="fas fa-check-circle mb-2 text-blue-400"></i>
-									<p class="text-[10px] font-bold uppercase text-gray-500">{{ $f }}</p>
-									<p class="text-xs font-bold text-gray-700">Tersedia</p>
-								</div>
-							@endforeach
-						@else
-							<p class="col-span-4 text-center text-xs text-gray-400">Fasilitas standar</p>
-						@endif
+						<div class="rounded-2xl bg-gray-50 p-4 text-center">
+							<i class="fas fa-snowflake mb-2 text-blue-400"></i>
+							<p class="text-[10px] font-bold uppercase text-gray-500">AC</p>
+							<p class="text-xs font-bold text-gray-700">Tersedia</p>
+						</div>
+						<div class="rounded-2xl bg-gray-50 p-4 text-center">
+							<i class="fas fa-plug mb-2 text-orange-400"></i>
+							<p class="text-[10px] font-bold uppercase text-gray-500">USB Port</p>
+							<p class="text-xs font-bold text-gray-700">Tiap Kursi</p>
+						</div>
+						<div class="rounded-2xl bg-gray-50 p-4 text-center">
+							<i class="fas fa-couch mb-2 text-green-400"></i>
+							<p class="text-[10px] font-bold uppercase text-gray-400">Konfigurasi</p>
+							<p class="text-xs font-bold text-gray-700">2 - 2</p>
+						</div>
+						<div class="rounded-2xl bg-gray-50 p-4 text-center">
+							<i class="fas fa-restroom mb-2 text-purple-400"></i>
+							<p class="text-[10px] font-bold uppercase text-gray-400">Toilet</p>
+							<p class="text-xs font-bold text-gray-700">Tersedia</p>
+						</div>
 					</div>
 				</div>
 
@@ -119,42 +139,26 @@
 							</div>
 
 							<div class="mt-4 grid grid-cols-4 gap-4">
-								@php
-									$kapasitas = $jadwal->transportasi->kapasitas;
-									$kursiPerBaris = 4;
-									$jumlahBaris = ceil($kapasitas / $kursiPerBaris);
-									$labels = ['A', 'B', 'C', 'D'];
-								@endphp
-
-								@for ($i = 1; $i <= $jumlahBaris; $i++)
-									@foreach ($labels as $index => $label)
-										@php
-											$seatId = $i . $label;
-											// Cek apakah nomor kursi ini melebihi total kapasitas
-											$currentSeatNumber = ($i - 1) * $kursiPerBaris + ($index + 1);
-										@endphp
-
-										@if ($currentSeatNumber <= $kapasitas)
-											{{-- Spasi jalan tengah (aisle) setelah kursi ke-2 (B) --}}
-											@if ($index == 2)
-												<div class="flex items-center justify-center text-[10px] font-bold text-gray-300">
-													{{ $i }}
-												</div>
-											@endif
-
-											<button class="h-10 w-10 rounded-xl text-[10px] font-black transition-all duration-200"
-												@click="selectSeat('{{ $seatId }}')"
-												:class="{
-												    'bg-gray-100 text-gray-400 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') &&
-												        selectedSeat !== '{{ $seatId }}',
-												    'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
-												    'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
-												}">
-												{{ $seatId }}
-											</button>
-										@endif
-									@endforeach
-								@endfor
+								<?php
+                            $rows = ['1', '2', '3', '4', '5'];
+                            $cols = ['A', 'B', 'C', 'D'];
+                            foreach($rows as $row):
+                                foreach($cols as $index => $col):
+                                    $seatId = $row . $col;
+                                    // Beri celah di tengah (Gang)
+                                    if($index == 2) echo '<div></div>';
+                            ?>
+								<button class="h-10 w-10 rounded-xl text-[10px] font-black transition-all duration-200"
+									@click="selectSeat('<?= $seatId ?>')"
+									:class="{
+									    'bg-gray-100 text-gray-400 hover:bg-gray-200': !bookedSeats.includes('<?= $seatId ?>') &&
+									        selectedSeat !== '<?= $seatId ?>',
+									    'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '<?= $seatId ?>',
+									    'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('<?= $seatId ?>')
+									}">
+									<?= $seatId ?>
+								</button>
+								<?php endforeach; endforeach; ?>
 							</div>
 						</div>
 					</div>
@@ -178,23 +182,30 @@
 					<div class="mb-6 flex items-center justify-between">
 						<span class="text-xs font-bold text-gray-400">Total Bayar</span>
 						<span class="text-xl font-black text-orange-500"
-							x-text="selectedSeat ? 'Rp {{ number_format($jadwal->harga, 0, ',', '.') }}' : 'Rp 0'"></span>
+							x-text="selectedSeat
+    ? 'Rp {{ number_format($jadwal->harga, 0, ',', '.') }}'
+    : 'Rp 0'"></span>
 					</div>
 
-					<form method="GET" action="{{ route('checkout', $jadwal->id) }}">
-						<input name="seat" type="hidden" :value="selectedSeat">
-						<button
-							class="w-full rounded-2xl py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg transition active:scale-95"
-							type="submit" :disabled="!selectedSeat"
-							:class="selectedSeat ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-100' : 'bg-gray-200 cursor-not-allowed'">
-							Lanjutkan
-						</button>
-					</form>
+<form method="GET" action="{{ route('checkout', $jadwal->id) }}">
+    <input type="hidden" name="seat" :value="selectedSeat">
+
+    <button
+        type="submit"
+        :disabled="!selectedSeat"
+        :class="selectedSeat
+            ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-100'
+            : 'bg-gray-200 cursor-not-allowed'"
+        class="w-full rounded-2xl py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg transition active:scale-95">
+        Lanjutkan
+    </button>
+</form>
 					<p class="mt-4 text-center text-[9px] text-gray-400">Dengan mengklik tombol, Anda menyetujui Syarat & Ketentuan
 						HubTrans.</p>
 				</div>
 			</div>
 		</div>
 
-	</div>
-@endsection
+	</body>
+
+</html>

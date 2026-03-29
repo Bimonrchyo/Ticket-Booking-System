@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Jadwal extends Model
 {
     protected $table = 'jadwal';
-    protected $fillable = ['transportasi_id', 'titik_asal', 'titik_tujuan', 'waktu_berangkat', 'waktu_tiba', 'harga', 'info_lokasi', 'stok_tersedia'];
+    protected $fillable = ['transportasi_id', 'asal_id', 'tujuan_id', 'waktu_berangkat', 'waktu_tiba', 'harga', 'info_lokasi', 'stok_tersedia'];
 
     public function transportasi()
     {

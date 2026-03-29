@@ -1,90 +1,86 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Pembayaran - HubTrans')
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Pembayaran - HubTrans</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		@vite(['resources/css/app.css', 'resources/js/app.js'])
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+		<script>
+			function paymentData(initialSeconds) {
+				return {
+					timeLeft: initialSeconds,
+					isDragging: false,
+					fileName: '',
+					preview: null,
+					copied: false,
 
-@push('styles')
-	<script src="https://cdn.tailwindcss.com"></script>
-	<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-	@vite(['resources/css/app.css', 'resources/js/app.js'])
-@endpush
+					init() {
+						// Timer Logic
+						let timer = setInterval(() => {
+							if (this.timeLeft > 0) {
+								this.timeLeft--;
+							} else {
+								clearInterval(timer);
+							}
+						}, 1000);
+					},
 
-@push('scripts')
-	<script>
-		function paymentData(initialSeconds) {
-			return {
-				timeLeft: initialSeconds,
-				isDragging: false,
-				fileName: '',
-				preview: null,
-				copied: false,
+					copyVA() {
+						let va = document.querySelector('.va-code').innerText.replace(/\s+/g, '');
+						navigator.clipboard.writeText(va).then(() => {
+							this.copied = true;
+							setTimeout(() => (this.copied = false), 2000);
+						});
+					},
 
-				init() {
-					// Timer Logic
-					let timer = setInterval(() => {
-						if (this.timeLeft > 0) {
-							this.timeLeft--;
-						} else {
-							clearInterval(timer);
-						}
-					}, 1000);
-				},
+					formatTime() {
+						if (this.timeLeft <= 0) return '00:00:00';
+						let h = Math.floor(this.timeLeft / 3600);
+						let m = Math.floor((this.timeLeft % 3600) / 60);
+						let s = this.timeLeft % 60;
+						return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+					},
 
-				copyVA() {
-					let va = document.querySelector('.va-code').innerText.replace(/\s+/g, '');
-					navigator.clipboard.writeText(va).then(() => {
-						this.copied = true;
-						setTimeout(() => (this.copied = false), 2000);
-					});
-				},
-
-				formatTime() {
-					if (this.timeLeft <= 0) return '00:00:00';
-					let h = Math.floor(this.timeLeft / 3600);
-					let m = Math.floor((this.timeLeft % 3600) / 60);
-					let s = this.timeLeft % 60;
-					return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-				},
-
-				selectFile(event) {
-					const file = event.target.files[0];
-					this.processFile(file);
-				},
-
-				handleDrop(event) {
-					this.isDragging = false;
-					const file = event.dataTransfer.files[0];
-					if (file) {
-						this.$refs.fileInput.files = event.dataTransfer.files;
+					selectFile(event) {
+						const file = event.target.files[0];
 						this.processFile(file);
+					},
+
+					handleDrop(event) {
+						this.isDragging = false;
+						const file = event.dataTransfer.files[0];
+						if (file) {
+							this.$refs.fileInput.files = event.dataTransfer.files;
+							this.processFile(file);
+						}
+					},
+
+					processFile(file) {
+						if (!file) return;
+
+						// Validasi tipe file (Opsional tapi disarankan)
+						const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+						if (!allowedTypes.includes(file.type)) {
+							alert('Format file tidak didukung (Gunakan JPG, PNG, atau PDF)');
+							return;
+						}
+
+						this.fileName = file.name;
+						this.preview = URL.createObjectURL(file);
+
+						// KITA HAPUS BAGIAN SUBMIT OTOMATIS DI SINI
+						console.log("File siap, menunggu user klik tombol submit.");
 					}
-				},
+				};
+			}
+		</script>
+	</head>
 
-				processFile(file) {
-					if (!file) return;
-
-					// Validasi tipe file (Opsional tapi disarankan)
-					const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-					if (!allowedTypes.includes(file.type)) {
-						alert('Format file tidak didukung (Gunakan JPG, PNG, atau PDF)');
-						return;
-					}
-
-					this.fileName = file.name;
-					this.preview = URL.createObjectURL(file);
-
-					// KITA HAPUS BAGIAN SUBMIT OTOMATIS DI SINI
-					console.log("File siap, menunggu user klik tombol submit.");
-				}
-			};
-		}
-	</script>
-@endpush
-
-@section('nav-links')
-@endsection
-
-@section('content')
-	<div class="bg-gray-50 font-sans" x-data="paymentData({{ (int) $timeLeft }})">
+	<body class="bg-gray-50 font-sans" x-data="paymentData({{ (int) $timeLeft }})">
 
 		<nav class="sticky top-0 z-40 bg-blue-700 p-4 text-white shadow-md">
 			<div class="mx-auto flex max-w-6xl items-center justify-between px-2">
@@ -104,8 +100,7 @@
 			</div>
 		</nav>
 		<form class="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center" x-ref="uploadForm" method="POST"
-			action="{{ route('konfirmasi.pembayaran', $booking->id) }}" enctype="multipart/form-data"
-			onsubmit="return confirm('Anda yakin ingin mengirim bukti pembayaran?')">
+			action="{{ route('upload.bukti', $booking->id) }}" enctype="multipart/form-data">
 			@csrf
 			<div class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 lg:flex-row">
 
@@ -123,20 +118,16 @@
 						class="transform rounded-3xl border border-gray-300 bg-white p-8 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
 						<h3 class="mb-6 text-sm font-black uppercase tracking-widest text-gray-800">Transfer Ke</h3>
 
-						@php
-							$bankName = 'BCA';
-							$bankAccount = config('payment.bank_account', env('BANK_ACCOUNT', '1234567890123456'));
-							$bankAccountDisplay = chunk_split($bankAccount, 4, ' ');
-						@endphp
 						<div class="flex items-center gap-6 rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-left">
 							<div
 								class="flex h-10 w-16 items-center justify-center rounded-lg border border-gray-100 bg-white font-bold italic text-blue-800 shadow-sm">
-								{{ $bankName }}
+								BCA
 							</div>
 							<div class="flex-1">
 								<p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Nomor Rekening / VA</p>
 								<div class="flex items-center gap-3">
-									<span class="va-code text-xl font-black tracking-wider text-gray-800">{{ $bankAccountDisplay }}</span>
+									<span
+										class="va-code text-xl font-black tracking-wider text-gray-800">{{ chunk_split($booking->kode_booking, 4, ' ') }}</span>
 									<button class="text-xs font-bold text-blue-600 hover:underline" @click="copyVA()">
 										<span x-show="!copied">SALIN</span>
 										<span class="text-green-600" x-show="copied"><i class="fas fa-check"></i> TERSALIN</span>
@@ -245,7 +236,7 @@
 			</div>
 		</form>
 
-	</div>
-@endsection
+
+	</body>
 
 </html>
