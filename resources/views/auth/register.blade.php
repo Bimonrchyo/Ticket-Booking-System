@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Register | HubTrans System')
+@section('title', 'Register | PastiTravel System')
 
 @push('styles')
 	<style>
@@ -22,7 +22,7 @@
 					<i class="fas fa-route text-3xl"></i>
 				</div>
 				<h1 class="text-2xl font-bold text-gray-800">Daftar Akun Baru</h1>
-				<p class="text-sm text-gray-500">Bergabunglah dengan HubTrans untuk memesan tiket dengan mudah</p>
+				<p class="text-sm text-gray-500">Bergabunglah dengan PastiTravel untuk memesan tiket dengan mudah</p>
 			</div>
 
 			<div class="p-8 pt-4">

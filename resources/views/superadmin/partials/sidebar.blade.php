@@ -5,7 +5,7 @@
 				<i class="fas fa-shield-alt text-xs text-white"></i>
 			</div>
 			<h1 class="text-xl font-black uppercase italic tracking-tighter text-white">
-				Hub<span class="text-indigo-500">Owner</span>
+				Pasti<span class="text-indigo-500">Owner</span>
 			</h1>
 		</div>
 		<p class="px-1 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Superadmin Panel</p>

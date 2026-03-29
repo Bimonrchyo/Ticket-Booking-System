@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pembayaran - HubTrans')
+@section('title', 'Pembayaran - PastiTravel')
 
 @push('styles')
 	<script src="https://cdn.tailwindcss.com"></script>
@@ -142,7 +142,7 @@
 										<span class="text-green-600" x-show="copied"><i class="fas fa-check"></i> TERSALIN</span>
 									</button>
 								</div>
-								<p class="mt-1 text-xs font-bold uppercase text-gray-500">Atas Nama: PT HUBTRANS INDONESIA</p>
+								<p class="mt-1 text-xs font-bold uppercase text-gray-500">Atas Nama: PT PASTITRAVEL INDONESIA</p>
 							</div>
 						</div>
 

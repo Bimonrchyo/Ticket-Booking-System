@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola ' . ucfirst($type) . ' | HubTrans')
+@section('title', 'Kelola ' . ucfirst($type) . ' | PastiTravel')
 
 @section('nav-links')
 	<a class="border-b-2 border-orange-400 text-orange-400" href="{{ route('admin.dashboard') }}">Dashboard</a>
@@ -13,7 +13,7 @@
 		<div class="flex">
 			<aside class="fixed left-0 top-0 hidden min-h-screen w-64 bg-slate-900 text-gray-300 lg:block">
 				<div class="p-6">
-					<h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Hub<span
+					<h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Pasti<span
 							class="text-blue-500">Admin</span></h1>
 				</div>
 				<nav class="mt-6 space-y-2 px-4">
@@ -23,8 +23,7 @@
 						<i class="fas fa-chart-pie w-5"></i> Dashboard
 					</a>
 					<div class="px-4 pb-2 pt-6 text-[10px] font-black uppercase tracking-widest text-slate-500">Manajemen</div>
-					<a
-						class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition hover:bg-slate-800"
+					<a class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition hover:bg-slate-800"
 						href="#" @click="openArmada = !openArmada">
 						<i class="fas fa-bus w-5"></i> Kelola Armada
 						<i class="fas fa-chevron-down ml-auto w-3" :class="openArmada && 'rotate-180'"></i>

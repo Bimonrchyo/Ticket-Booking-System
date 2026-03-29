@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Verifikasi Pembayaran | HubTrans')
+@section('title', 'Verifikasi Pembayaran | PastiTravel')
 
 @section('nav-links')
 	<a class="hover:text-blue-200" href="{{ route('admin.dashboard') }}">Dashboard</a>
@@ -13,7 +13,7 @@
 		<div class="flex">
 			<aside class="fixed left-0 top-0 hidden min-h-screen w-64 bg-slate-900 text-gray-300 lg:block">
 				<div class="p-6">
-					<h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Hub<span
+					<h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Pasti<span
 							class="text-blue-500">Admin</span></h1>
 				</div>
 				<nav class="mt-6 space-y-2 px-4">

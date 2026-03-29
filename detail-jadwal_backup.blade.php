@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Detail Perjalanan & Pilih Kursi - HubTrans</title>
+		<title>Detail Perjalanan & Pilih Kursi - PastiTravel</title>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -187,21 +187,21 @@
     : 'Rp 0'"></span>
 					</div>
 
-<form method="GET" action="{{ route('checkout', $jadwal->id) }}">
-    <input type="hidden" name="seat" :value="selectedSeat">
+					<form method="GET" action="{{ route('checkout', $jadwal->id) }}">
+						<input name="seat" type="hidden" :value="selectedSeat">
 
-    <button
-        type="submit"
-        :disabled="!selectedSeat"
-        :class="selectedSeat
-            ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-100'
-            : 'bg-gray-200 cursor-not-allowed'"
-        class="w-full rounded-2xl py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg transition active:scale-95">
-        Lanjutkan
-    </button>
-</form>
+						<button
+							class="w-full rounded-2xl py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg transition active:scale-95"
+							type="submit" :disabled="!selectedSeat"
+							:class="selectedSeat
+							    ?
+							    'bg-blue-600 hover:bg-blue-700 shadow-blue-100' :
+							    'bg-gray-200 cursor-not-allowed'">
+							Lanjutkan
+						</button>
+					</form>
 					<p class="mt-4 text-center text-[9px] text-gray-400">Dengan mengklik tombol, Anda menyetujui Syarat & Ketentuan
-						HubTrans.</p>
+						PastiTravel.</p>
 				</div>
 			</div>
 		</div>

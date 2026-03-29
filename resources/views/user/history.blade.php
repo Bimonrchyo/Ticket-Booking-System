@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'History Pemesanan | HubTrans')
+@section('title', 'History Pemesanan | PastiTravel')
 
 @section('nav-links')
 	<a class="border-b-2 border-orange-400 text-orange-400" href="{{ route('home') }}">Beranda</a>

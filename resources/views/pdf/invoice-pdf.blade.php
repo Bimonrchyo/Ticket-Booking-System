@@ -199,7 +199,7 @@
 		<div class="invoice-container">
 			<div class="invoice-header">
 				<h1>🧾 INVOICE PEMBAYARAN</h1>
-				<p>HubTrans - Sistem Pemesanan Tiket Online</p>
+				<p>PastiTravel - Sistem Pemesanan Tiket Online</p>
 			</div>
 
 			<div class="invoice-body">
@@ -312,7 +312,7 @@
 
 			<div class="invoice-footer">
 				<div class="note">
-					Invoice ini merupakan bukti pembayaran yang sah untuk pemesanan tiket HubTrans.
+					Invoice ini merupakan bukti pembayaran yang sah untuk pemesanan tiket PastiTravel.
 					Simpan invoice ini sebagai referensi pembayaran Anda.
 				</div>
 				<div class="date">

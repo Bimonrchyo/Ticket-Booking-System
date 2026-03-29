@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Lupa Password | HubTrans System')
+@section('title', 'Lupa Password | PastiTravel System')
 
 @push('styles')
 	<style>

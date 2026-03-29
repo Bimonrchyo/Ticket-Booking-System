@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Tambah Admin - HubTrans Superadmin</title>
+		<title>Tambah Admin - PastiTravel Superadmin</title>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -127,7 +127,7 @@
 				</div>
 
 				<p class="mt-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">
-					HubTrans Management System &copy; 2026
+					PastiTravel Management System &copy; 2026
 				</p>
 			</main>
 		</div>

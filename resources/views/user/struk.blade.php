@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Struk Pembayaran | HubTrans')
+@section('title', 'Struk Pembayaran | PastiTravel')
 
 @section('nav-links')
 	<a class="border-b-2 border-orange-400 text-orange-400" href="{{ route('home') }}">Beranda</a>

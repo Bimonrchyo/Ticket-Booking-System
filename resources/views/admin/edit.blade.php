@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Edit {{ isset($transportasi) ? 'Armada' : 'Jadwal' }} - HubTrans</title>
+		<title>Edit {{ isset($transportasi) ? 'Armada' : 'Jadwal' }} - PastiTravel</title>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -15,7 +15,7 @@
 		<nav class="sticky top-0 z-50 bg-blue-700 p-4 shadow-md">
 			<div class="container mx-auto flex flex-wrap items-center justify-between gap-4">
 				<a class="flex items-center gap-2 text-xl font-bold text-white" href="{{ route('admin.dashboard') }}">
-					<i class="fas fa-route"></i> HubTrans
+					<i class="fas fa-route"></i> PastiTravel
 				</a>
 				<div class="flex flex-wrap items-center gap-4 text-sm font-semibold text-white">
 					<a class="hover:text-blue-200" href="{{ route('admin.dashboard') }}">Dashboard</a>
@@ -32,7 +32,7 @@
 		<div class="flex">
 			<aside class="fixed left-0 top-0 hidden min-h-screen w-64 bg-slate-900 text-gray-300 lg:block">
 				<div class="p-6">
-					<h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Hub<span
+					<h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Pasti<span
 							class="text-blue-500">Admin</span></h1>
 				</div>
 				<nav class="mt-6 space-y-2 px-4">

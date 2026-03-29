@@ -17,7 +17,7 @@
 			<nav class="sticky top-0 z-50 bg-blue-700 p-4 shadow-md">
 				<div class="container mx-auto flex flex-wrap items-center justify-between gap-4">
 					<a class="flex items-center gap-2 text-xl font-bold text-white" href="#">
-						<i class="fas fa-route"></i> HubTrans
+						<i class="fas fa-route"></i> PastiTravel
 					</a>
 					<div class="flex flex-wrap items-center gap-4 text-sm font-semibold text-white">
 						@yield('nav-links')
@@ -35,7 +35,7 @@
 
 		<footer class="bg-gray-800 py-8 text-white">
 			<div class="container mx-auto px-4 text-center">
-				<p>&copy; 2024 HubTrans. All rights reserved.</p>
+				<p>&copy; 2024 PastiTravel. All rights reserved.</p>
 			</div>
 		</footer>
 

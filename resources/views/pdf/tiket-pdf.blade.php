@@ -189,7 +189,7 @@
 		<div class="ticket-container">
 			<div class="ticket-header">
 				<h1>🎫 E-TIKET PERJALANAN</h1>
-				<p>HubTrans - Sistem Pemesanan Tiket Online</p>
+				<p>PastiTravel - Sistem Pemesanan Tiket Online</p>
 			</div>
 
 			<div class="ticket-body">

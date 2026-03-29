@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Register Perusahaan | HubTrans System')
+@section('title', 'Register Perusahaan | PastiTravel System')
 
 @section('nav-links')
 @endsection

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard | HubTrans')
+@section('title', 'Admin Dashboard | PastiTravel')
 
 @section('nav-links')
 	<a class="border-b-2 border-orange-400 text-orange-400" href="{{ route('admin.dashboard') }}">Dashboard</a>
@@ -13,7 +13,7 @@
 		<div class="flex">
 			<aside class="fixed left-0 top-0 hidden min-h-screen w-64 bg-slate-900 text-gray-300 lg:block">
 				<div class="p-6">
-					<h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Hub<span
+					<h1 class="text-2xl font-black uppercase italic tracking-tighter text-white">Pasti<span
 							class="text-blue-500">Admin</span></h1>
 				</div>
 				<nav class="mt-6 space-y-2 px-4">
@@ -68,7 +68,7 @@
 
 					<div class="mb-8">
 						<h1 class="text-3xl font-black uppercase tracking-tighter text-slate-800">Dashboard Admin</h1>
-						<p class="text-lg font-bold uppercase tracking-widest text-gray-400">Kelola sistem HubTrans</p>
+						<p class="text-lg font-bold uppercase tracking-widest text-gray-400">Kelola sistem PastiTravel</p>
 					</div>
 
 					<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

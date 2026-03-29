@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Jadwal | HubTrans')
+@section('title', 'Detail Jadwal | PastiTravel')
 
 @push('scripts')
 	<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -191,7 +191,7 @@
 						</button>
 					</form>
 					<p class="mt-4 text-center text-[9px] text-gray-400">Dengan mengklik tombol, Anda menyetujui Syarat & Ketentuan
-						HubTrans.</p>
+						PastiTravel.</p>
 				</div>
 			</div>
 		</div>

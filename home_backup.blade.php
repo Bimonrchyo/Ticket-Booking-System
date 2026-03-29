@@ -14,7 +14,7 @@
 		<nav class="sticky top-0 z-50 bg-blue-700 p-4 shadow-md">
 			<div class="container mx-auto flex items-center justify-between">
 				<a class="flex items-center gap-2 text-xl font-bold text-white" href="#">
-					<i class="fas fa-route"></i> HubTrans
+					<i class="fas fa-route"></i> PastiTravel
 					<div class="hidden items-center space-x-6 text-sm font-semibold text-white md:flex">
 						<a class="border-b-2 border-orange-400 text-orange-400" href="/home">Beranda</a>
 						<a class="hover:text-blue-200" href="/history">Histori</a>

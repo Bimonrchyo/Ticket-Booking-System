@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Hasil Pencarian | HubTrans')
+@section('title', 'Hasil Pencarian | PastiTravel')
 
 @push('scripts')
 	<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>

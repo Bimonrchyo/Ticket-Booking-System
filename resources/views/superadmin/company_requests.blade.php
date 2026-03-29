@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Permohonan Perusahaan - HubTrans Superadmin</title>
+		<title>Permohonan Perusahaan - PastiTravel Superadmin</title>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -112,7 +112,7 @@
 		</div>
 
 		<div class="mt-12 text-center opacity-50">
-			<p class="text-sm text-slate-500">HubTrans Superadmin Panel</p>
+			<p class="text-sm text-slate-500">PastiTravel Superadmin Panel</p>
 		</div>
 		</main>
 		</div>

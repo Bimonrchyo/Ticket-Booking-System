@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Reset Password | HubTrans System')
+@section('title', 'Reset Password | PastiTravel System')
 
 @push('styles')
 	<style>

@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Laporan Global - HubTrans Owner</title>
+		<title>Laporan Global - PastiTravel Owner</title>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -132,7 +132,7 @@
 				</div>
 
 				<div class="mt-12 text-center opacity-75">
-					<h1 class="text-3xl font-black italic tracking-tighter">HUB<span class="text-indigo-600">TRANS</span></h1>
+					<h1 class="text-3xl font-black italic tracking-tighter">PASTI<span class="text-indigo-600">TRAVEL</span></h1>
 					<p class="mt-2 text-sm text-slate-500">Sistem Integrasi Transportasi Lengkap</p>
 				</div>
 			</main>

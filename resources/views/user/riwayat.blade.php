@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Riwayat Pemesanan | HubTrans')
+@section('title', 'Riwayat Pemesanan | PastiTravel')
 
 @section('nav-links')
 	<a class="hover:text-blue-200" href="{{ route('home') }}">Beranda</a>

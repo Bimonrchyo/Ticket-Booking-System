@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Pembayaran - HubTrans</title>
+		<title>Pembayaran - PastiTravel</title>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -133,7 +133,7 @@
 										<span class="text-green-600" x-show="copied"><i class="fas fa-check"></i> TERSALIN</span>
 									</button>
 								</div>
-								<p class="mt-1 text-xs font-bold uppercase text-gray-500">Atas Nama: PT HUBTRANS INDONESIA</p>
+								<p class="mt-1 text-xs font-bold uppercase text-gray-500">Atas Nama: PT PASTITRAVEL INDONESIA</p>
 							</div>
 						</div>
 
