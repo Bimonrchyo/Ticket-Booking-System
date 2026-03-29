@@ -46,8 +46,12 @@
 						</div>
 						<p class="relative z-10 mb-3 text-[10px] font-black uppercase tracking-widest text-indigo-500">Total Pendapatan
 						</p>
-						<h3 class="relative z-10 text-2xl font-black tracking-tighter text-slate-800">IDR
-							{{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</h3>
+
+						<h3 class="relative z-10 text-2xl font-black tracking-tighter text-slate-800">Rp
+							{{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}
+							<span class="text-sm font-normal text-green-500">(+{{ round(($totalPendapatan ?? 0) / 10000, 0) }}
+								transaksi)</span>
+						</h3>
 						<p class="relative z-10 mt-2 text-[10px] font-bold text-green-500"><i class="fas fa-arrow-up mr-1"></i>
 							{{ $totalBookings ?? 0 }} transaksi</p>
 					</div>

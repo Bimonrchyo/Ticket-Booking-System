@@ -89,6 +89,7 @@ class SuperAdminController extends Controller
     public function report()
     {
         $totalPendapatan = Booking::where('status', 'paid')->sum('total_harga');
+        $platformRevenue = Booking::where('status', 'paid')->sum(DB::raw('total_harga * 0.3')); // Platform takes 30% commission
 
         // Break down per kategori transportasi
 

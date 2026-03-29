@@ -157,11 +157,21 @@
 						</div>
 
 						<div class="mb-6 space-y-2 border-t pt-4">
-							<div class="flex items-center justify-between">
-								<span class="text-xs font-bold uppercase text-gray-500">Total Bayar</span>
-								<span class="text-xl font-black tracking-tighter text-orange-500">Rp
-									{{ number_format($jadwal->harga, 0, ',', '.') }}</span>
+							<div class="flex items-center justify-between text-sm">
+								<span class="font-bold text-gray-700">Harga Tiket</span>
+								<span class="font-bold">Rp {{ number_format($jadwal->harga, 0, ',', '.') }}</span>
 							</div>
+							<div class="flex items-center justify-between text-sm">
+								<span class="text-gray-500">Biaya Layanan PastiTravel</span>
+								<span class="text-gray-500">Rp 10.000</span>
+							</div>
+							<div class="h-px bg-gray-200"></div>
+							<div class="flex items-center justify-between">
+								<span class="text-lg font-bold uppercase text-gray-800">TOTAL BAYAR</span>
+								<span class="text-2xl font-black tracking-tighter text-orange-600">Rp
+									{{ number_format($jadwal->harga + 10000, 0, ',', '.') }}</span>
+							</div>
+							<p class="mt-2 text-[10px] font-bold text-green-600">✅ Termasuk E-Tiket digital & support 24/7</p>
 						</div>
 
 						<button

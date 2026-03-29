@@ -58,11 +58,15 @@ class BookingController extends Controller
                 throw new \Exception('Kursi sudah dibooking');
             }
 
-            $kodeBooking = 'HT-'.strtoupper(Str::random(8));
+            $kodeBooking = 'PT-'.strtoupper(Str::random(8));
+
+            $biayaLayanan = 10000; // Biaya layanan PastiTravel Rp 10.000
+
+            $totalHarga = $jadwalLocked->harga + $biayaLayanan;
 
             $jadwalLocked->decrement('stok_tersedia');
 
-            return Booking::create([
+            $booking = Booking::create([
                 'kode_booking' => $kodeBooking,
                 'user_id' => Auth::id(),
                 'jadwal_id' => $jadwalLocked->id,
@@ -72,9 +76,10 @@ class BookingController extends Controller
                 'nik' => $request->nik,
                 'status' => 'pending',
                 'qr_code_data' => $kodeBooking,
-                'total_harga' => $jadwalLocked->harga
+                'total_harga' => $totalHarga
             ]);
         });
+
 
         return redirect()
             ->route('pembayaran', $booking->id)
