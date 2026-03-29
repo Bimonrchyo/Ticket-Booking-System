@@ -11,10 +11,19 @@ use Illuminate\Support\Facades\Hash;
 class SuperAdminController extends Controller
 {
     // Menampilkan daftar Admin
-    public function index()
+    public function index(Request $request)
     {
-        $admins = User::where('role', 'admin')->with('company')->get();
-        return view('superadmin.daftar_admin', compact('admins'));
+        $search = $request->filled('search') ? $request->search : '';
+        $admins = User::where('role', 'admin')
+            ->with('company')
+            ->when($search, function ($query, $search) {
+                return $query->where('nama', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10);
+        $admins->appends($request->only('search'));
+        return view('superadmin.daftar_admin', compact('admins', 'search'));
     }
 
     public function companyRequests()
@@ -59,9 +68,9 @@ class SuperAdminController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required',
-            'email' => 'required|unique:users',
-            'password' => 'required|min:6',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
         ]);
 
         User::create([
@@ -70,9 +79,10 @@ class SuperAdminController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'admin',
             'status' => 'active',
+            'company_id' => null,
         ]);
 
-        return redirect()->back()->with('success', 'Admin baru berhasil didaftarkan');
+        return redirect()->back()->with('success', 'Admin baru berhasil didaftarkan.');
     }
 
     // Laporan Pendapatan Gabungan
@@ -81,13 +91,24 @@ class SuperAdminController extends Controller
         $totalPendapatan = Booking::where('status', 'paid')->sum('total_harga');
 
         // Break down per kategori transportasi
-        $laporanPerModa = Booking::join('jadwal', 'pemesanan.jadwal_id', '=', 'jadwal.id')
+
+        $laporanPerModa = Booking::join('jadwal', 'bookings.jadwal_id', '=', 'jadwal.id')
             ->join('transportasi', 'jadwal.transportasi_id', '=', 'transportasi.id')
-            ->where('pemesanan.status', 'paid')
-            ->selectRaw('transportasi.tipe, SUM(pemesanan.total_harga) as total')
+            ->where('bookings.status', 'paid')
+            ->selectRaw('transportasi.tipe, SUM(bookings.total_harga) as total')
             ->groupBy('transportasi.tipe')
             ->get();
 
+
         return view('superadmin.laporan_global', compact('totalPendapatan', 'laporanPerModa'));
+    }
+
+    public function destroy(User $user)
+    {
+        if ($user->role !== 'admin') {
+            return back()->with('error', 'Hanya admin yang bisa dihapus.');
+        }
+        $user->delete();
+        return back()->with('success', 'Admin berhasil dihapus.');
     }
 }

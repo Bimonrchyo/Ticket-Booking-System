@@ -118,9 +118,13 @@ Route::middleware(['auth', 'role:admin,superadmin'])->prefix('admin')->group(fun
 
 // --- SUPERADMIN ROLE ---
 Route::middleware(['auth', 'role:superadmin'])->prefix('super')->group(function () {
-    Route::resource('/manage-admin', SuperAdminController::class);
-    Route::get('/laporan-global', [SuperAdminController::class, 'report']);
-    Route::get('/perusahaan-pendaftaran', [SuperAdminController::class, 'companyRequests'])->name('super.company.requests');
-    Route::patch('/perusahaan-pendaftaran/{company}/approve', [SuperAdminController::class, 'approveCompany'])->name('super.company.approve');
-    Route::patch('/perusahaan-pendaftaran/{company}/reject', [SuperAdminController::class, 'rejectCompany'])->name('super.company.reject');
+    Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('super.dashboard');
+    Route::get('/daftar', [SuperAdminController::class, 'index'])->name('super.daftar');
+    Route::get('/tambah', [SuperAdminController::class, 'create'])->name('super.tambah');
+    Route::post('/tambah', [SuperAdminController::class, 'store'])->name('super.store');
+    Route::delete('/admin/{user}', [SuperAdminController::class, 'destroy'])->name('super.destroy');
+    Route::get('/laporan-global', [SuperAdminController::class, 'report'])->name('super.laporan');
+    Route::get('/company-requests', [SuperAdminController::class, 'companyRequests'])->name('super.company.requests');
+    Route::patch('/company-requests/{company}/approve', [SuperAdminController::class, 'approveCompany'])->name('super.company.approve');
+    Route::patch('/company-requests/{company}/reject', [SuperAdminController::class, 'rejectCompany'])->name('super.company.reject');
 });
