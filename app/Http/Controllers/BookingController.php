@@ -14,6 +14,9 @@ class BookingController extends Controller
 {
     public function create(Jadwal $jadwal)
     {
+        if (! $jadwal) {
+            abort(404, 'Jadwal tidak ditemukan.');
+        }
         $jadwal->load(['transportasi', 'asal', 'tujuan']);
 
         return view('user.detail-jadwal', compact('jadwal'));
@@ -21,6 +24,10 @@ class BookingController extends Controller
 
     public function checkout(Request $request, Jadwal $jadwal)
     {
+        if (! $jadwal) {
+            abort(404, 'Jadwal tidak ditemukan.');
+        }
+
         $request->validate([
             'seat' => 'required|string|max:5'
         ]);
@@ -34,60 +41,71 @@ class BookingController extends Controller
     // 3. Fungsi Simpan Booking (Store)
     public function store(Request $request, Jadwal $jadwal)
     {
+        if (! $jadwal) {
+            abort(404, 'Jadwal tidak ditemukan.');
+        }
+
         $request->validate([
             'nomor_kursi' => 'required|string|max:5',
             'nama_penumpang' => 'required|string|max:255',
             'nik' => 'required|digits:16'
         ]);
 
-        $booking = DB::transaction(function () use ($request, $jadwal) {
+        try {
+            $booking = DB::transaction(function () use ($request, $jadwal) {
 
-            $jadwalLocked = Jadwal::where('id', $jadwal->id)
-                ->lockForUpdate()
-                ->first();
+                $jadwalLocked = Jadwal::where('id', $jadwal->id)
+                    ->lockForUpdate()
+                    ->first();
 
-            if ($jadwalLocked->stok_tersedia <= 0) {
-                throw new \Exception('Stok habis');
-            }
+                if ($jadwalLocked->stok_tersedia <= 0) {
+                    throw new \Exception('Stok habis');
+                }
 
-            $seatTaken = Booking::where('jadwal_id', $jadwalLocked->id)
-                ->where('nomor_kursi', $request->nomor_kursi)
-                ->exists();
+                $seatTaken = Booking::where('jadwal_id', $jadwalLocked->id)
+                    ->where('nomor_kursi', $request->nomor_kursi)
+                    ->exists();
 
-            if ($seatTaken) {
-                throw new \Exception('Kursi sudah dibooking');
-            }
+                if ($seatTaken) {
+                    throw new \Exception('Kursi sudah dibooking');
+                }
 
-            $kodeBooking = 'PT-'.strtoupper(Str::random(8));
+                $kodeBooking = 'PT-'.strtoupper(Str::random(8));
 
-            $biayaLayanan = 10000; // Biaya layanan PastiTravel Rp 10.000
+                $biayaLayanan = 10000; // Biaya layanan PastiTravel Rp 10.000
 
-            $totalHarga = $jadwalLocked->harga + $biayaLayanan;
+                $totalHarga = $jadwalLocked->harga + $biayaLayanan;
 
-            $jadwalLocked->decrement('stok_tersedia');
+                $jadwalLocked->decrement('stok_tersedia');
 
-            $booking = Booking::create([
-                'kode_booking' => $kodeBooking,
-                'user_id' => Auth::id(),
-                'jadwal_id' => $jadwalLocked->id,
-                'nomor_kursi' => $request->nomor_kursi,
-                'nama_penumpang' => $request->nama_penumpang,
-                'expired_at' => now()->addMinutes(30),
-                'nik' => $request->nik,
-                'status' => 'pending',
-                'qr_code_data' => $kodeBooking,
-                'total_harga' => $totalHarga
-            ]);
-        });
+                return Booking::create([
+                    'kode_booking' => $kodeBooking,
+                    'user_id' => Auth::id(),
+                    'jadwal_id' => $jadwalLocked->id,
+                    'nomor_kursi' => $request->nomor_kursi,
+                    'nama_penumpang' => $request->nama_penumpang,
+                    'expired_at' => now()->addMinutes(30),
+                    'nik' => $request->nik,
+                    'status' => 'pending',
+                    'qr_code_data' => $kodeBooking,
+                    'total_harga' => $totalHarga
+                ]);
+            });
 
-
-        return redirect()
-            ->route('pembayaran', $booking->id)
-            ->with('success', 'Booking berhasil, silakan bayar.');
+            return redirect()
+                ->route('pembayaran', $booking->id)
+                ->with('success', 'Booking berhasil, silakan bayar.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage())->withInput();
+        }
     }
 
     public function uploadBukti(Request $request, Booking $booking)
     {
+        if (! $booking) {
+            abort(404, 'Booking tidak ditemukan.');
+        }
+
         $request->validate([
             'bukti_transfer' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048'
         ]);
@@ -148,6 +166,10 @@ class BookingController extends Controller
     // 4. Halaman Pembayaran (Instruksi Upload Bukti)
     public function payment(Booking $booking)
     {
+        if (! $booking) {
+            abort(404, 'Booking tidak ditemukan.');
+        }
+
         abort_if($booking->user_id !== Auth::id(), 403);
 
         $booking->load(['jadwal.transportasi', 'payment']);
@@ -188,6 +210,10 @@ class BookingController extends Controller
 
     public function retryPayment(Booking $booking)
     {
+        if (! $booking) {
+            abort(404, 'Booking tidak ditemukan.');
+        }
+
         abort_if($booking->user_id !== Auth::id(), 403);
 
         // Hanya bisa diulang pada status rejected atau unpaid
@@ -212,9 +238,21 @@ class BookingController extends Controller
             ->with('success', 'Pembayaran diulang. Silakan upload bukti lagi untuk diverifikasi.');
     }
 
+    public function storePayment(Booking $booking)
+    {
+        if (! $booking) {
+            abort(404);
+        }
+        // Additional safety if needed
+    }
+
     // Proses Cetak Tiket ke PDF
     public function printTicket(Booking $booking)
     {
+        if (! $booking) {
+            abort(404, 'Booking tidak ditemukan.');
+        }
+
         abort_if($booking->user_id !== Auth::id(), 403);
         abort_if($booking->status !== 'paid', 403);
 
