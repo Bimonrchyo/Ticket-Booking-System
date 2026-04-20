@@ -18,25 +18,25 @@
 		$durasi = $berangkat->diff($tiba);
 
 		$icon = match ($jadwal->transportasi->tipe) {
-		    'pesawat' => 'plane',
-		    'bus' => 'bus',
-		    'kereta' => 'train',
-		    'kapal' => 'ship',
-		    default => 'bus',
+			'pesawat' => 'plane',
+			'bus' => 'bus',
+			'kereta' => 'train',
+			'kapal' => 'ship',
+			default => 'bus',
 		};
 
 		$bookedSeats = optional($jadwal->bookings)->pluck('nomor_kursi')->toArray() ?? [];
 	@endphp
 
 	<div class="bg-gray-50 font-sans" x-data="{
-    selectedSeat: null,
-    bookedSeats: @js($bookedSeats),
-    selectSeat(seat) {
-        if (!this.bookedSeats.includes(seat)) {
-            this.selectedSeat = (this.selectedSeat === seat) ? null : seat;
-        }
-    }
-}">
+					selectedSeat: null,
+					bookedSeats: @js($bookedSeats),
+					selectSeat(seat) {
+						if (!this.bookedSeats.includes(seat)) {
+							this.selectedSeat = (this.selectedSeat === seat) ? null : seat;
+						}
+					}
+				}">
 
 		<nav class="sticky top-0 z-40 bg-blue-700 p-4 text-white shadow-md">
 			<div class="mx-auto flex max-w-6xl items-center gap-4">
@@ -53,7 +53,8 @@
 				<div
 					class="transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
 					<div class="mb-6 flex items-center gap-4">
-						<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-600">
+						<div
+							class="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-600">
 							<i class="fas fa-{{ $icon }}"></i>
 						</div>
 						<div>
@@ -61,7 +62,8 @@
 							<p class="mt-2 text-sm text-gray-600">
 								{{ $jadwal->asal->nama }} → {{ $jadwal->tujuan->nama }}
 							</p>
-							<p class="text-sm font-bold uppercase tracking-widest text-gray-500">{{ $jadwal->transportasi->kode_identitas }}
+							<p class="text-sm font-bold uppercase tracking-widest text-gray-500">
+								{{ $jadwal->transportasi->kode_identitas }}
 							</p>
 						</div>
 					</div>
@@ -121,35 +123,41 @@
 							<div class="mt-4 grid grid-cols-4 gap-4">
 								@php
 									$kapasitas = $jadwal->transportasi->kapasitas;
-									$kursiPerBaris = 4;
-									$jumlahBaris = ceil($kapasitas / $kursiPerBaris);
-									$labels = ['A', 'B', 'C', 'D'];
+									$seatLayout = $jadwal->transportasi->seat_layout ?? [
+										'seats_per_row' => 4,
+										'left' => ['A', 'B'],
+										'right' => ['C', 'D'],
+										'aisle_after' => 2
+									];
+									$seatsPerRow = $seatLayout['seats_per_row'] ?? 4;
+									$jumlahBaris = ceil($kapasitas / $seatsPerRow);
+									$allLabels = array_merge($seatLayout['left'] ?? ['A', 'B'], $seatLayout['right'] ?? ['C', 'D']);
 								@endphp
 
 								@for ($i = 1; $i <= $jumlahBaris; $i++)
-									@foreach ($labels as $index => $label)
+									@foreach ($allLabels as $index => $label)
 										@php
 											$seatId = $i . $label;
 											// Cek apakah nomor kursi ini melebihi total kapasitas
-											$currentSeatNumber = ($i - 1) * $kursiPerBaris + ($index + 1);
+											$currentSeatNumber = ($i - 1) * $seatsPerRow + ($index + 1);
 										@endphp
 
 										@if ($currentSeatNumber <= $kapasitas)
 											{{-- Spasi jalan tengah (aisle) setelah kursi ke-2 (B) --}}
-											@if ($index == 2)
-												<div class="flex items-center justify-center text-[10px] font-bold text-gray-300">
+											@if (($index + 1) == ($seatLayout['aisle_after'] ?? 2))
+												<div
+													class="col-span-2 flex items-center justify-center text-[10px] font-bold text-gray-300">
 													{{ $i }}
 												</div>
 											@endif
 
 											<button class="h-10 w-10 rounded-xl text-[10px] font-black transition-all duration-200"
-												@click="selectSeat('{{ $seatId }}')"
-												:class="{
-												    'bg-gray-100 text-gray-400 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') &&
-												        selectedSeat !== '{{ $seatId }}',
-												    'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
-												    'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
-												}">
+												@click="selectSeat('{{ $seatId }}')" :class="{
+																													'bg-gray-100 text-gray-400 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') &&
+																														selectedSeat !== '{{ $seatId }}',
+																													'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
+																													'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
+																												}">
 												{{ $seatId }}
 											</button>
 										@endif
@@ -190,7 +198,8 @@
 							Lanjutkan
 						</button>
 					</form>
-					<p class="mt-4 text-center text-[9px] text-gray-400">Dengan mengklik tombol, Anda menyetujui Syarat & Ketentuan
+					<p class="mt-4 text-center text-[9px] text-gray-400">Dengan mengklik tombol, Anda menyetujui Syarat &
+						Ketentuan
 						PastiTravel.</p>
 				</div>
 			</div>

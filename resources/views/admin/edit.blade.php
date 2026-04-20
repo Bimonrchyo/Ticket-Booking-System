@@ -149,6 +149,17 @@
 									</div>
 								</div>
 
+								<div>
+									<label class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Layout Kursi</label>
+									<select class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold" name="seat_layout">
+<option value="bus" {{ ($transportasi->seat_layout['type'] ?? '') == 'bus' ? 'selected' : '' }}>Bus AKAP (2-2)</option>
+										<option value="kereta" {{ ($transportasi->seat_layout['type'] ?? '') == 'kereta' ? 'selected' : '' }}>Kereta Eksekutif (2-2)</option>
+										<option value="pesawat" {{ ($transportasi->seat_layout['type'] ?? '') == 'pesawat' ? 'selected' : '' }}>Pesawat (3-3)</option>
+										<option value="kapal" {{ ($transportasi->seat_layout['type'] ?? '') == 'kapal' ? 'selected' : '' }}>Kapal Ferry (2-2)</option>
+									</select>
+									<p class="mt-1 text-[9px] text-gray-500">Layout otomatis sesuai standar Indonesia</p>
+								</div>
+
 							</div>
 							<div class="mb-10 rounded-[2rem] border border-blue-100 bg-blue-50/50 p-8">
 								<label

@@ -1,9 +1,12 @@
-# Superadmin Dynamic Improvements
+# TODO: Add More Jadwal Schedules
 
-- [x] Read & update routes/web.php for missing routes (destroy, search)
-- [x] Update SuperAdminController.php: paginate, search, destroy/resetPassword methods
-- [x] Create sidebar partial
-- [x] Edit daftar_admin.blade.php: @foreach admins, search JS, pagination, actions
-- [x] Edit tambah_admin.blade.php: Laravel form @csrf/route
-- [ ] Test dynamic pages
+**Approved Plan:** Add 6 new jadwal (2 per transportasi), today departure.
+
+**Steps:**
+
+- [x] Create TODO.md
+- [ ] Edit DatabaseSeeder.php (add jadwal ID 4-9)
+- [ ] Run `php artisan migrate:fresh --seed`
+- [ ] Verify new jadwal via tinker
+- [ ] Test app (login user → home → search today)
 - [ ] attempt_completion

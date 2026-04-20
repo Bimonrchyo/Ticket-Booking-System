@@ -33,14 +33,23 @@ class TransportController extends Controller
             'nama_brand' => 'required|string|max:100',
             'kode_identitas' => 'required|string|max:50',
             'kapasitas' => 'required|integer|min:1',
+            'seat_layout' => 'required|string',
             'fasilitas' => 'nullable|array'
         ]);
+
+        $layouts = [
+            'bus' => ['type' => 'bus', 'seats_per_row' => 4, 'left' => ['A', 'B'], 'right' => ['C', 'D'], 'aisle_after' => 2, 'rows' => 12, 'desc' => 'AKAP Standar 2-2'],
+            'kereta' => ['type' => 'kereta', 'seats_per_row' => 4, 'left' => ['A', 'B'], 'right' => ['C', 'D'], 'aisle_after' => 2, 'rows' => 20, 'desc' => 'KAI Eksekutif 2-2 Facing'],
+            'pesawat' => ['type' => 'pesawat', 'seats_per_row' => 6, 'left' => ['A', 'B', 'C'], 'right' => ['D', 'E', 'F'], 'aisle_after' => 3, 'rows' => 30, 'desc' => 'Narrow Body 3-3'],
+            'kapal' => ['type' => 'kapal', 'seats_per_row' => 4, 'left' => ['A', 'B'], 'right' => ['C', 'D'], 'aisle_after' => 2, 'rows' => 25, 'desc' => 'Ferry Ekonomi 2-2'],
+        ];
 
         Transportasi::create([
             'tipe' => $type,
             'nama_brand' => $request->nama_brand,
             'kode_identitas' => $request->kode_identitas,
             'kapasitas' => $request->kapasitas,
+            'seat_layout' => $layouts[$request->seat_layout] ?? $layouts['bus'],
             'fasilitas' => $request->fasilitas,
             'user_id' => auth('web')->id(),
         ]);
