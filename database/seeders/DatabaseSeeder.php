@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -94,6 +95,16 @@ class DatabaseSeeder extends Seeder
                 'kapasitas' => 80,
                 'user_id' => 2,
                 'fasilitas' => json_encode(['ac', 'makan', 'usb']),
+                'seat_layout' => json_encode([
+                    'type' => 'kereta',
+                    'seats_per_row' => 5,
+                    'left' => ['A', 'B'],
+                    'right' => ['C', 'D', 'E'],
+                    'aisle_after' => 2,
+                    'rows' => 16,
+                    'desc' => 'KAI Ekonomi 2-3',
+                    'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'middle', 'E' => 'window']
+                ]),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -104,8 +115,17 @@ class DatabaseSeeder extends Seeder
                 'kode_identitas' => 'GA-737',
                 'kapasitas' => 180,
                 'user_id' => 2,
-
                 'fasilitas' => json_encode(['ac', 'makan', 'usb']),
+                'seat_layout' => json_encode([
+                    'type' => 'pesawat',
+                    'seats_per_row' => 6,
+                    'left' => ['A', 'B', 'C'],
+                    'right' => ['D', 'E', 'F'],
+                    'aisle_after' => 3,
+                    'rows' => 30,
+                    'desc' => 'Narrow Body 3-3 Lion Air/Garuda',
+                    'seat_types' => ['A' => 'window', 'B' => 'middle', 'C' => 'aisle', 'D' => 'aisle', 'E' => 'middle', 'F' => 'window']
+                ]),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -117,6 +137,37 @@ class DatabaseSeeder extends Seeder
                 'kapasitas' => 48,
                 'user_id' => 2,
                 'fasilitas' => json_encode(['ac', 'makan', 'usb']),
+                'seat_layout' => json_encode([
+                    'type' => 'bus',
+                    'seats_per_row' => 4,
+                    'left' => ['A', 'B'],
+                    'right' => ['C', 'D'],
+                    'aisle_after' => 2,
+                    'rows' => 12,
+                    'desc' => 'AKAP Standar 2-2',
+                    'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'window']
+                ]),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'id' => 4,
+                'tipe' => 'kapal',
+                'nama_brand' => 'Pelni KM. Dobonsolo',
+                'kode_identitas' => 'PL-DB-01',
+                'kapasitas' => 100,
+                'user_id' => 2,
+                'fasilitas' => json_encode(['ac', 'makan', 'hiburan']),
+                'seat_layout' => json_encode([
+                    'type' => 'kapal',
+                    'seats_per_row' => 4,
+                    'left' => ['A', 'B'],
+                    'right' => ['C', 'D'],
+                    'aisle_after' => 2,
+                    'rows' => 25,
+                    'desc' => 'Ferry Ekonomi 2-2',
+                    'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'window']
+                ]),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -239,6 +290,20 @@ class DatabaseSeeder extends Seeder
                 'harga' => 220000,
                 'info_lokasi' => 'Terminal Purabaya',
                 'stok_tersedia' => 28,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            // APRIL 26 SCHEDULE - KAPAL JAKARTA TO DENPASAR
+            [
+                'id' => 10,
+                'transportasi_id' => 4,
+                'asal_id' => 1,
+                'tujuan_id' => 5,
+                'waktu_berangkat' => Carbon::create(2026, 4, 26, 8, 0, 0),
+                'waktu_tiba' => Carbon::create(2026, 4, 28, 14, 0, 0),
+                'harga' => 450000,
+                'info_lokasi' => 'Pelabuhan Tanjung Priok, Jakarta',
+                'stok_tersedia' => 85,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

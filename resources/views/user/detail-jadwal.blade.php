@@ -55,14 +55,14 @@
 	@endphp
 
 	<div class="bg-gray-50 font-sans" x-data="{
-			selectedSeat: null,
-			bookedSeats: @js($bookedSeats),
-			selectSeat(seat) {
-				if (!this.bookedSeats.includes(seat)) {
-					this.selectedSeat = (this.selectedSeat === seat) ? null : seat;
+				selectedSeat: null,
+				bookedSeats: @js($bookedSeats),
+				selectSeat(seat) {
+					if (!this.bookedSeats.includes(seat)) {
+						this.selectedSeat = (this.selectedSeat === seat) ? null : seat;
+					}
 				}
-			}
-		}">
+			}">
 
 		<nav class="sticky top-0 z-40 bg-blue-700 p-4 text-white shadow-md">
 			<div class="mx-auto flex max-w-6xl items-center gap-4">
@@ -91,7 +91,8 @@
 							<p class="mt-2 text-sm text-gray-600">{{ $jadwal->asal->nama }} → {{ $jadwal->tujuan->nama }}
 							</p>
 							<p class="text-sm font-bold uppercase tracking-widest text-gray-500">
-								{{ $jadwal->transportasi->kode_identitas }}</p>
+								{{ $jadwal->transportasi->kode_identitas }}
+							</p>
 						</div>
 					</div>
 
@@ -153,10 +154,18 @@
 					{{-- Seat Map Container --}}
 					<div class="flex flex-col items-center">
 						{{-- Front Indicator --}}
+						@php
+							$frontIcon = match ($jadwal->transportasi->tipe) {
+								'bus' => 'steering-wheel',
+								'kereta' => 'train',
+								'pesawat' => 'plane-departure',
+								'kapal' => 'ship',
+								default => 'arrow-up'
+							};
+						@endphp
 						<div
 							class="mb-4 flex w-full max-w-[360px] items-center justify-center rounded-t-3xl border-2 border-dashed border-gray-200 py-3 text-gray-300">
-							<i
-								class="fas fa-{{ $jadwal->transportasi->tipe === 'bus' ? 'steering-wheel' : 'plane-departure' }} mr-2"></i>
+							<i class="fas fa-{{ $frontIcon }} mr-2"></i>
 							<span class="text-[10px] font-bold uppercase tracking-widest">Depan</span>
 						</div>
 
@@ -193,11 +202,10 @@
 												<button
 													class="relative flex h-10 w-10 flex-col items-center justify-center rounded-xl text-[10px] font-black transition-all duration-200"
 													@click="selectSeat('{{ $seatId }}')" :class="{
-																		'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
-																		'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
-																		'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
-																	}" @if($isBooked) disabled @endif
-													title="{{ $typeLabels[$type] ?? '' }}">
+																						'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
+																						'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
+																						'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
+																					}" @if($isBooked) disabled @endif title="{{ $typeLabels[$type] ?? '' }}">
 													{{ $seatId }}
 													@if(!$isBooked)
 														<span
@@ -229,11 +237,10 @@
 												<button
 													class="relative flex h-10 w-10 flex-col items-center justify-center rounded-xl text-[10px] font-black transition-all duration-200"
 													@click="selectSeat('{{ $seatId }}')" :class="{
-																		'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
-																		'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
-																		'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
-																	}" @if($isBooked) disabled @endif
-													title="{{ $typeLabels[$type] ?? '' }}">
+																						'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
+																						'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
+																						'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
+																					}" @if($isBooked) disabled @endif title="{{ $typeLabels[$type] ?? '' }}">
 													{{ $seatId }}
 													@if(!$isBooked)
 														<span
