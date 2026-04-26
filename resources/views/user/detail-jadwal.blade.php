@@ -26,17 +26,43 @@
 		};
 
 		$bookedSeats = optional($jadwal->bookings)->pluck('nomor_kursi')->toArray() ?? [];
+
+		$kapasitas = $jadwal->transportasi->kapasitas;
+		$seatLayout = $jadwal->transportasi->seat_layout ?? [
+			'seats_per_row' => 4,
+			'left' => ['A', 'B'],
+			'right' => ['C', 'D'],
+			'aisle_after' => 2,
+			'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'window']
+		];
+		$seatsPerRow = $seatLayout['seats_per_row'] ?? 4;
+		$jumlahBaris = ceil($kapasitas / $seatsPerRow);
+		$leftLabels = $seatLayout['left'] ?? ['A', 'B'];
+		$rightLabels = $seatLayout['right'] ?? ['C', 'D'];
+		$allLabels = array_merge($leftLabels, $rightLabels);
+		$seatTypes = $seatLayout['seat_types'] ?? [];
+
+		$typeColors = [
+			'window' => 'bg-blue-400',
+			'aisle' => 'bg-green-400',
+			'middle' => 'bg-gray-300',
+		];
+		$typeLabels = [
+			'window' => 'Jendela',
+			'aisle' => 'Gang',
+			'middle' => 'Tengah',
+		];
 	@endphp
 
 	<div class="bg-gray-50 font-sans" x-data="{
-					selectedSeat: null,
-					bookedSeats: @js($bookedSeats),
-					selectSeat(seat) {
-						if (!this.bookedSeats.includes(seat)) {
-							this.selectedSeat = (this.selectedSeat === seat) ? null : seat;
-						}
-					}
-				}">
+			selectedSeat: null,
+			bookedSeats: @js($bookedSeats),
+			selectSeat(seat) {
+				if (!this.bookedSeats.includes(seat)) {
+					this.selectedSeat = (this.selectedSeat === seat) ? null : seat;
+				}
+			}
+		}">
 
 		<nav class="sticky top-0 z-40 bg-blue-700 p-4 text-white shadow-md">
 			<div class="mx-auto flex max-w-6xl items-center gap-4">
@@ -49,7 +75,10 @@
 
 		<div class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 lg:flex-row">
 
+			{{-- LEFT COLUMN --}}
 			<div class="flex-1 space-y-6">
+
+				{{-- Info Card --}}
 				<div
 					class="transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
 					<div class="mb-6 flex items-center gap-4">
@@ -59,12 +88,10 @@
 						</div>
 						<div>
 							<h2 class="text-xl font-black text-gray-800">{{ $jadwal->transportasi->nama_brand }}</h2>
-							<p class="mt-2 text-sm text-gray-600">
-								{{ $jadwal->asal->nama }} → {{ $jadwal->tujuan->nama }}
+							<p class="mt-2 text-sm text-gray-600">{{ $jadwal->asal->nama }} → {{ $jadwal->tujuan->nama }}
 							</p>
 							<p class="text-sm font-bold uppercase tracking-widest text-gray-500">
-								{{ $jadwal->transportasi->kode_identitas }}
-							</p>
+								{{ $jadwal->transportasi->kode_identitas }}</p>
 						</div>
 					</div>
 
@@ -83,7 +110,7 @@
 
 					<p class="mt-3 text-xs text-gray-500">Durasi {{ $durasi->h }} jam {{ $durasi->i }} menit</p>
 
-					<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+					<div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
 						@if ($jadwal->transportasi->fasilitas)
 							@foreach ($jadwal->transportasi->fasilitas as $f)
 								<div class="rounded-2xl bg-gray-50 p-4 text-center">
@@ -98,77 +125,134 @@
 					</div>
 				</div>
 
+				{{-- Seat Map Card --}}
 				<div
 					class="transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
-					<h3 class="mb-6 text-sm font-black uppercase tracking-widest text-gray-800">Pilih Nomor Kursi</h3>
+					<h3 class="mb-2 text-sm font-black uppercase tracking-widest text-gray-800">Pilih Nomor Kursi</h3>
+					<p class="mb-6 text-xs text-gray-400">{{ $seatLayout['desc'] ?? 'Standar' }}</p>
 
+					{{-- Legend --}}
+					<div class="mb-6 flex flex-wrap justify-center gap-3">
+						@foreach (['window' => 'Jendela', 'aisle' => 'Gang', 'middle' => 'Tengah'] as $t => $l)
+							<div
+								class="flex items-center gap-1.5 rounded-full bg-gray-50 px-3 py-1 text-[10px] font-bold text-gray-500">
+								<span class="h-2.5 w-2.5 rounded-full {{ $typeColors[$t] }}"></span>
+								{{ $l }}
+							</div>
+						@endforeach
+						<div
+							class="flex items-center gap-1.5 rounded-full bg-gray-50 px-3 py-1 text-[10px] font-bold text-gray-500">
+							<span class="h-2.5 w-2.5 rounded-full bg-blue-600"></span> Dipilih
+						</div>
+						<div
+							class="flex items-center gap-1.5 rounded-full bg-gray-50 px-3 py-1 text-[10px] font-bold text-gray-500">
+							<span class="h-2.5 w-2.5 rounded-full bg-gray-300"></span> Terisi
+						</div>
+					</div>
+
+					{{-- Seat Map Container --}}
 					<div class="flex flex-col items-center">
-						<div class="mb-8 flex gap-4 text-[10px] font-bold">
-							<div class="flex items-center gap-2">
-								<div class="h-4 w-4 rounded bg-gray-100"></div> Tersedia
+						{{-- Front Indicator --}}
+						<div
+							class="mb-4 flex w-full max-w-[360px] items-center justify-center rounded-t-3xl border-2 border-dashed border-gray-200 py-3 text-gray-300">
+							<i
+								class="fas fa-{{ $jadwal->transportasi->tipe === 'bus' ? 'steering-wheel' : 'plane-departure' }} mr-2"></i>
+							<span class="text-[10px] font-bold uppercase tracking-widest">Depan</span>
+						</div>
+
+						{{-- Column Headers --}}
+						<div class="flex w-full max-w-[360px] items-center justify-between px-2 mb-2">
+							<div class="flex gap-2">
+								@foreach ($leftLabels as $lbl)
+									<div class="w-10 text-center text-[10px] font-bold text-gray-400">{{ $lbl }}</div>
+								@endforeach
 							</div>
-							<div class="flex items-center gap-2">
-								<div class="h-4 w-4 rounded bg-blue-600"></div> Dipilih
-							</div>
-							<div class="flex items-center gap-2">
-								<div class="h-4 w-4 rounded bg-gray-300"></div> Terisi
+							<div class="w-8"></div>
+							<div class="flex gap-2">
+								@foreach ($rightLabels as $lbl)
+									<div class="w-10 text-center text-[10px] font-bold text-gray-400">{{ $lbl }}</div>
+								@endforeach
 							</div>
 						</div>
 
-						<div class="relative w-full max-w-[300px] rounded-t-[50px] border-4 border-gray-100 p-6">
-							<div class="absolute -top-10 left-1/2 -translate-x-1/2 text-gray-300">
-								<i class="fas fa-steering-wheel fa-3x"></i>
-							</div>
-
-							<div class="mt-4 grid grid-cols-4 gap-4">
-								@php
-									$kapasitas = $jadwal->transportasi->kapasitas;
-									$seatLayout = $jadwal->transportasi->seat_layout ?? [
-										'seats_per_row' => 4,
-										'left' => ['A', 'B'],
-										'right' => ['C', 'D'],
-										'aisle_after' => 2
-									];
-									$seatsPerRow = $seatLayout['seats_per_row'] ?? 4;
-									$jumlahBaris = ceil($kapasitas / $seatsPerRow);
-									$allLabels = array_merge($seatLayout['left'] ?? ['A', 'B'], $seatLayout['right'] ?? ['C', 'D']);
-								@endphp
-
-								@for ($i = 1; $i <= $jumlahBaris; $i++)
-									@foreach ($allLabels as $index => $label)
-										@php
-											$seatId = $i . $label;
-											// Cek apakah nomor kursi ini melebihi total kapasitas
-											$currentSeatNumber = ($i - 1) * $seatsPerRow + ($index + 1);
-										@endphp
-
-										@if ($currentSeatNumber <= $kapasitas)
-											{{-- Spasi jalan tengah (aisle) setelah kursi ke-2 (B) --}}
-											@if (($index + 1) == ($seatLayout['aisle_after'] ?? 2))
-												<div
-													class="col-span-2 flex items-center justify-center text-[10px] font-bold text-gray-300">
-													{{ $i }}
-												</div>
+						{{-- Rows --}}
+						<div class="flex w-full max-w-[360px] flex-col gap-2">
+							@for ($row = 1; $row <= $jumlahBaris; $row++)
+								<div class="flex items-center justify-between">
+									{{-- Left Side --}}
+									<div class="flex gap-2">
+										@foreach ($leftLabels as $label)
+											@php
+												$seatId = $row . $label;
+												$seatNum = ($row - 1) * $seatsPerRow + (array_search($label, $allLabels) + 1);
+												$isBooked = in_array($seatId, $bookedSeats);
+												$type = $seatTypes[$label] ?? 'window';
+												$dotColor = $typeColors[$type] ?? 'bg-gray-300';
+											@endphp
+											@if ($seatNum <= $kapasitas)
+												<button
+													class="relative flex h-10 w-10 flex-col items-center justify-center rounded-xl text-[10px] font-black transition-all duration-200"
+													@click="selectSeat('{{ $seatId }}')" :class="{
+																		'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
+																		'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
+																		'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
+																	}" @if($isBooked) disabled @endif
+													title="{{ $typeLabels[$type] ?? '' }}">
+													{{ $seatId }}
+													@if(!$isBooked)
+														<span
+															class="absolute -top-1 -right-1 h-2 w-2 rounded-full {{ $dotColor }} border border-white"></span>
+													@endif
+												</button>
+											@else
+												<div class="h-10 w-10"></div>
 											@endif
+										@endforeach
+									</div>
 
-											<button class="h-10 w-10 rounded-xl text-[10px] font-black transition-all duration-200"
-												@click="selectSeat('{{ $seatId }}')" :class="{
-																													'bg-gray-100 text-gray-400 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') &&
-																														selectedSeat !== '{{ $seatId }}',
-																													'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
-																													'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
-																												}">
-												{{ $seatId }}
-											</button>
-										@endif
-									@endforeach
-								@endfor
-							</div>
+									{{-- Row Number / Aisle --}}
+									<div class="flex h-10 w-8 items-center justify-center">
+										<span class="text-[10px] font-bold text-gray-300">{{ $row }}</span>
+									</div>
+
+									{{-- Right Side --}}
+									<div class="flex gap-2">
+										@foreach ($rightLabels as $label)
+											@php
+												$seatId = $row . $label;
+												$seatNum = ($row - 1) * $seatsPerRow + (array_search($label, $allLabels) + 1);
+												$isBooked = in_array($seatId, $bookedSeats);
+												$type = $seatTypes[$label] ?? 'window';
+												$dotColor = $typeColors[$type] ?? 'bg-gray-300';
+											@endphp
+											@if ($seatNum <= $kapasitas)
+												<button
+													class="relative flex h-10 w-10 flex-col items-center justify-center rounded-xl text-[10px] font-black transition-all duration-200"
+													@click="selectSeat('{{ $seatId }}')" :class="{
+																		'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
+																		'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
+																		'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
+																	}" @if($isBooked) disabled @endif
+													title="{{ $typeLabels[$type] ?? '' }}">
+													{{ $seatId }}
+													@if(!$isBooked)
+														<span
+															class="absolute -top-1 -right-1 h-2 w-2 rounded-full {{ $dotColor }} border border-white"></span>
+													@endif
+												</button>
+											@else
+												<div class="h-10 w-10"></div>
+											@endif
+										@endforeach
+									</div>
+								</div>
+							@endfor
 						</div>
 					</div>
 				</div>
 			</div>
 
+			{{-- RIGHT COLUMN: Summary Sidebar --}}
 			<div class="lg:w-80">
 				<div
 					class="sticky top-24 transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
@@ -199,11 +283,9 @@
 						</button>
 					</form>
 					<p class="mt-4 text-center text-[9px] text-gray-400">Dengan mengklik tombol, Anda menyetujui Syarat &
-						Ketentuan
-						PastiTravel.</p>
+						Ketentuan PastiTravel.</p>
 				</div>
 			</div>
 		</div>
-
 	</div>
 @endsection

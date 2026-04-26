@@ -31,7 +31,9 @@ class BookingController extends Controller
                     if (!$layout)
                         return $fail('Seat layout tidak ditemukan');
 
-                    preg_match('/^(\\d+)([A-E])$/', $value, $matches);
+                    $allLabels = array_merge($layout['left'] ?? ['A', 'B'], $layout['right'] ?? ['C', 'D']);
+                    $pattern = '/^(\d+)([' . implode('', $allLabels) . '])$/';
+                    preg_match($pattern, $value, $matches);
                     if (!isset($matches[1], $matches[2]))
                         return $fail('Format kursi tidak valid (contoh: 1A)');
 
@@ -41,6 +43,10 @@ class BookingController extends Controller
 
                     if ($row < 1 || $row > $maxRow) {
                         return $fail('Nomor baris tidak valid');
+                    }
+
+                    if (!in_array($letter, $allLabels)) {
+                        return $fail('Huruf kursi tidak valid untuk layout ini');
                     }
                 }
             ]
@@ -65,7 +71,9 @@ class BookingController extends Controller
                     if (!$layout)
                         return $fail('Seat layout tidak ditemukan');
 
-                    preg_match('/^(\\d+)([A-E])$/', $value, $matches);
+                    $allLabels = array_merge($layout['left'] ?? ['A', 'B'], $layout['right'] ?? ['C', 'D']);
+                    $pattern = '/^(\d+)([' . implode('', $allLabels) . '])$/';
+                    preg_match($pattern, $value, $matches);
                     if (!isset($matches[1], $matches[2]))
                         return $fail('Format kursi tidak valid');
 
@@ -75,6 +83,10 @@ class BookingController extends Controller
 
                     if ($row < 1 || $row > $maxRow)
                         return $fail('Nomor baris melebihi kapasitas');
+
+                    if (!in_array($letter, $allLabels)) {
+                        return $fail('Huruf kursi tidak valid untuk layout ini');
+                    }
                 }
             ],
             'nama_penumpang' => 'required|string|max:255',

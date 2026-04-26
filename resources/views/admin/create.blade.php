@@ -26,10 +26,7 @@
 						type="submit">Logout</button>
 				</form>
 			</div>
-		</div>
 	</nav>
-
-
 
 	<div class="flex">
 		<aside class="fixed left-0 top-0 hidden min-h-screen w-64 bg-slate-900 text-gray-300 lg:block">
@@ -87,15 +84,10 @@
 		</aside>
 
 		<main class="flex-1 p-8 lg:ml-64" x-data="{
-    // Jika $jadwal tidak ada, gunakan string kosong atau 0
     selectedArmada: '{{ old('transportasi_id', $jadwal->transportasi_id ?? '') }}',
-    stok: {{ old('stok', $jadwal->stok_tersedia ?? 0) }},
-
-    // Gunakan 'null' agar input benar-benar kosong dan placeholder muncul
     stok: {{ old('stok', isset($jadwal) ? $jadwal->stok_tersedia : 'null') }},
 
     armadaData: {
-        {{-- Gunakan ?? [] agar jika $armada tidak ada, loop tidak error --}}
         @foreach ($armada ?? [] as $item)
 		'{{ $item->id }}': {{ $item->kapasitas }}, @endforeach
     },
@@ -122,7 +114,6 @@
 					</p>
 
 					@if (isset($armada))
-						<!-- Form Tambah Jadwal -->
 						<form class="rounded-[2.5rem] border border-gray-100 bg-white p-10 shadow-xl shadow-gray-200/50"
 							action="{{ route('jadwal.store', $type) }}" method="POST">
 							@csrf
@@ -170,80 +161,77 @@
 											@endforeach
 										</select>
 									</div>
-								</div>
 
-								<div class="space-y-6">
-									<div>
-										<label
-											class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Waktu
-											Berangkat</label>
-										<input
-											class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
-											name="waktu" type="datetime-local" required>
-									</div>
-									<div>
-										<label
-											class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Harga
-											Tiket</label>
-										<div class="relative">
-											<span
-												class="absolute left-5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">Rp</span>
+									<div class="space-y-6">
+										<div>
+											<label
+												class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Waktu
+												Berangkat</label>
 											<input
-												class="w-full rounded-2xl border border-gray-200 bg-gray-50 py-4 pl-12 pr-5 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
-												name="harga" type="number" placeholder="0" required>
+												class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
+												name="waktu" type="datetime-local" required>
 										</div>
-									</div>
-								</div>
-							</div>
+										<div>
+											<label
+												class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Harga
+												Tiket</label>
+											<div class="relative">
+												<span
+													class="absolute left-5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">Rp</span>
+												<input
+													class="w-full rounded-2xl border border-gray-200 bg-gray-50 py-4 pl-12 pr-5 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
+													name="harga" type="number" placeholder="0" required>
+											</div>
+										</div>
 
-							<div class="mb-10">
-								<label
-									class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Info
-									Lokasi
-									Penjemputan</label>
-								<textarea
-									class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
-									name="lokasi" rows="3" placeholder="Contoh: Bandara Soekarno-Hatta, Terminal 2"
-									required></textarea>
-							</div>
+										<div class="mb-10">
+											<label
+												class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Info
+												Lokasi
+												Penjemputan</label>
+											<textarea
+												class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
+												name="lokasi" rows="3"
+												placeholder="Contoh: Bandara Soekarno-Hatta, Terminal 2"
+												required></textarea>
+										</div>
 
-							<div class="mb-10">
-								<label
-									class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Stok
-									Tersedia</label>
-								<input
-									class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
-									name="stok" type="number"
-									:class="stok > maxKapasitas ? 'border-red-500 ring-2 ring-red-200' : ''" x-model="stok"
-									:max="maxKapasitas"
-									:placeholder="selectedArmada ? 'Maksimal ' + maxKapasitas : 'Pilih armada dulu'"
-									required>
-								</input>
-							</div>
-							@if ($errors->any())
-								<div class="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4">
-									<ul class="list-inside list-disc text-sm text-red-600">
-										@foreach ($errors->all() as $error)
-											<li>{{ $error }}</li>
-										@endforeach
-									</ul>
-								</div>
-							@endif
-							<div class="flex gap-4">
-								<button
-									class="flex-1 rounded-2xl border-2 border-gray-100 py-5 font-black uppercase tracking-widest text-gray-400 transition hover:bg-gray-50 active:scale-95"
-									type="button" onclick="history.back()">
-									Batal
-								</button>
-								<button
-									class="flex-[2] rounded-2xl bg-blue-600 py-5 font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-blue-100 transition hover:bg-blue-700 active:scale-95"
-									type="submit">
-									Simpan Jadwal
-								</button>
-							</div>
+										<div class="mb-10">
+											<label
+												class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Stok
+												Tersedia</label>
+											<input
+												class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
+												name="stok" type="number"
+												:class="stok > maxKapasitas ? 'border-red-500 ring-2 ring-red-200' : ''"
+												x-model="stok" :max="maxKapasitas"
+												:placeholder="selectedArmada ? 'Maksimal ' + maxKapasitas : 'Pilih armada dulu'"
+												required>
+											</input>
+										</div>
+										@if ($errors->any())
+											<div class="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4">
+												<ul class="list-inside list-disc text-sm text-red-600">
+													@foreach ($errors->all() as $error)
+														<li>{{ $error }}</li>
+													@endforeach
+												</ul>
+											</div>
+										@endif
+										<div class="flex gap-4">
+											<button
+												class="flex-1 rounded-2xl border-2 border-gray-100 py-5 font-black uppercase tracking-widest text-gray-400 transition hover:bg-gray-50 active:scale-95"
+												type="button" onclick="history.back()">
+												Batal
+											</button>
+											<button
+												class="flex-[2] rounded-2xl bg-blue-600 py-5 font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-blue-100 transition hover:bg-blue-700 active:scale-95"
+												type="submit">
+												Simpan Jadwal
+											</button>
+										</div>
 						</form>
 					@else
-						<!-- Form Tambah Transportasi -->
 						<form class="rounded-[2.5rem] border border-gray-100 bg-white p-10 shadow-xl shadow-gray-200/50"
 							action="{{ route('transportasi.store', $type) }}" method="POST">
 							@csrf
@@ -259,14 +247,14 @@
 											<input class="hidden" name="moda" type="radio" :value="item" x-model="moda">
 											<div class="rounded-3xl border-2 p-4 text-center transition-all duration-300"
 												:class="moda === item ? 'border-blue-600 bg-blue-50 ring-4 ring-blue-100' :
-																'border-gray-100 bg-gray-50 group-hover:border-blue-200'">
+																	'border-gray-100 bg-gray-50 group-hover:border-blue-200'">
 												<i class="fas fa-2x mb-2 transition-colors" :class="[
-																	item === 'pesawat' ? 'fa-plane' : '',
-																	item === 'bus' ? 'fa-bus' : '',
-																	item === 'kereta' ? 'fa-train' : '',
-																	item === 'kapal' ? 'fa-ship' : '',
-																	moda === item ? 'text-blue-600' : 'text-gray-300'
-																]"></i>
+																		item === 'pesawat' ? 'fa-plane' : '',
+																		item === 'bus' ? 'fa-bus' : '',
+																		item === 'kereta' ? 'fa-train' : '',
+																		item === 'kapal' ? 'fa-ship' : '',
+																		moda === item ? 'text-blue-600' : 'text-gray-300'
+																	]"></i>
 												<p class="text-[10px] font-black uppercase tracking-widest"
 													:class="moda === item ? 'text-blue-600' : 'text-gray-400'"
 													x-text="item"></p>
@@ -274,121 +262,128 @@
 										</label>
 									</template>
 								</div>
-							</div>
 
-							<div class="mb-10 grid grid-cols-1 items-center gap-8 md:grid-cols-2">
-								<div>
-									<label
-										class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Nama
-										Brand /
-										Maskapai</label>
-									<input
-										class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
-										name="nama_brand" type="text" placeholder="Contoh: Garuda Indonesia / TransExpress"
-										required>
-								</div>
-								<div>
-									<label
-										class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Kode
-										Identitas</label>
-									<input
-										class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold uppercase text-blue-600 outline-none transition focus:ring-2 focus:ring-blue-500"
-										name="kode_identitas" type="text" placeholder="Contoh: PK-GAA / B 1234 TGC"
-										required>
-								</div>
-								<div>
-									<label
-										class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Total
-										Kapasitas
-										Kursi</label>
-									<div class="relative">
+								<div class="mb-10 grid grid-cols-1 items-center gap-8 md:grid-cols-2">
+									<div>
+										<label
+											class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Nama
+											Brand /
+											Maskapai</label>
 										<input
 											class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
-											name="kapasitas" type="number" placeholder="0" required>
-										<span
-											class="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase text-gray-400">Kursi</span>
+											name="nama_brand" type="text"
+											placeholder="Contoh: Garuda Indonesia / TransExpress" required>
 									</div>
-								</div>
-								<div>
-									<label
-										class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Layout
-										Kursi</label>
-									<select
-										class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold"
-										name="seat_layout">
-										<option value="bus">Bus AKAP (2-2: A B | C D)</option>
-										<option value="kereta">Kereta Eksekutif (2-2 Facing: A B | C D)</option>
-										<option value="pesawat">Pesawat Narrow Body (3-3: A B C | D E F)</option>
-										<option value="kapal">Kapal Ferry (2-2: A B | C D)</option>
-									</select>
-									<p class="mt-1 text-[9px] text-gray-500">Layout akan otomatis diterapkan sesuai standar
-										Indonesia</p>
-								</div>
-							</div>
+									<div>
+										<label
+											class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Kode
+											Identitas</label>
+										<input
+											class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold uppercase text-blue-600 outline-none transition focus:ring-2 focus:ring-blue-500"
+											name="kode_identitas" type="text" placeholder="Contoh: PK-GAA / B 1234 TGC"
+											required>
+									</div>
+									<div>
+										<label
+											class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Total
+											Kapasitas
+											Kursi</label>
+										<div class="relative">
+											<input
+												class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold outline-none transition focus:ring-2 focus:ring-blue-500"
+												name="kapasitas" type="number" placeholder="0" required>
+											<span
+												class="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase text-gray-400">Kursi</span>
+										</div>
+										<div>
+											<label
+												class="mb-2 block text-[11px] font-black uppercase tracking-widest text-gray-400">Layout
+												Kursi</label>
+											<select
+												class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold"
+												name="seat_layout">
+												<option value="bus">Bus AKAP (2-2): A Jendela, B Gang | C Gang, D Jendela
+												</option>
+												<option value="kereta">Kereta Ekonomi (2-3): A Jendela, B Gang | C Gang, D
+													Tengah, E Jendela</option>
+												<option value="pesawat">Pesawat Narrow Body (3-3): A Jendela, B Tengah, C
+													Gang | D Gang, E Tengah, F Jendela</option>
+												<option value="kapal">Kapal Ferry (2-2): A Jendela, B Gang | C Gang, D
+													Jendela</option>
+											</select>
+											<p class="mt-1 text-[9px] text-gray-500">Layout akan otomatis diterapkan sesuai
+												standar
+												Indonesia</p>
+										</div>
 
-							<div class="mb-10 rounded-[2rem] border border-blue-100 bg-blue-50/50 p-8">
-								<label
-									class="mb-6 block flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-blue-800">
-									<i class="fas fa-concierge-bell"></i> Fasilitas Armada
-								</label>
-								<div class="grid grid-cols-2 gap-y-4 md:grid-cols-3">
-									<label class="group flex cursor-pointer items-center gap-3">
-										<input class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
-											name="fasilitas[]" type="checkbox" value="makan">
-										<span
-											class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
-												class="fas fa-utensils w-5"></i> Makan</span>
-									</label>
-									<label class="group flex cursor-pointer items-center gap-3">
-										<input class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
-											name="fasilitas[]" type="checkbox" value="usb">
-										<span
-											class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
-												class="fas fa-bolt w-5"></i> USB Port</span>
-									</label>
-									<label class="group flex cursor-pointer items-center gap-3">
-										<input class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
-											name="fasilitas[]" type="checkbox" value="wifi">
-										<span
-											class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
-												class="fas fa-wifi w-5"></i> Wi-Fi</span>
-									</label>
-									<label class="group flex cursor-pointer items-center gap-3">
-										<input class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
-											name="fasilitas[]" type="checkbox" value="bagasi" checked>
-										<span
-											class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
-												class="fas fa-suitcase w-5"></i> Bagasi (20kg)</span>
-									</label>
-									<label class="group flex cursor-pointer items-center gap-3">
-										<input class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
-											name="fasilitas[]" type="checkbox" value="hiburan">
-										<span
-											class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
-												class="fas fa-tv w-5"></i> Hiburan</span>
-									</label>
-									<label class="group flex cursor-pointer items-center gap-3">
-										<input class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
-											name="fasilitas[]" type="checkbox" value="ac" checked>
-										<span
-											class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
-												class="fas fa-snowflake w-5"></i> AC</span>
-									</label>
-								</div>
-							</div>
+										<div class="mb-10 rounded-[2rem] border border-blue-100 bg-blue-50/50 p-8">
+											<label
+												class="mb-6 block flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-blue-800">
+												<i class="fas fa-concierge-bell"></i> Fasilitas Armada
+											</label>
+											<div class="grid grid-cols-2 gap-y-4 md:grid-cols-3">
+												<label class="group flex cursor-pointer items-center gap-3">
+													<input
+														class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
+														name="fasilitas[]" type="checkbox" value="makan">
+													<span
+														class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
+															class="fas fa-utensils w-5"></i> Makan</span>
+												</label>
+												<label class="group flex cursor-pointer items-center gap-3">
+													<input
+														class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
+														name="fasilitas[]" type="checkbox" value="usb">
+													<span
+														class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
+															class="fas fa-bolt w-5"></i> USB Port</span>
+												</label>
+												<label class="group flex cursor-pointer items-center gap-3">
+													<input
+														class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
+														name="fasilitas[]" type="checkbox" value="wifi">
+													<span
+														class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
+															class="fas fa-wifi w-5"></i> Wi-Fi</span>
+												</label>
+												<label class="group flex cursor-pointer items-center gap-3">
+													<input
+														class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
+														name="fasilitas[]" type="checkbox" value="bagasi" checked>
+													<span
+														class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
+															class="fas fa-suitcase w-5"></i> Bagasi (20kg)</span>
+												</label>
+												<label class="group flex cursor-pointer items-center gap-3">
+													<input
+														class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
+														name="fasilitas[]" type="checkbox" value="hiburan">
+													<span
+														class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
+															class="fas fa-tv w-5"></i> Hiburan</span>
+												</label>
+												<label class="group flex cursor-pointer items-center gap-3">
+													<input
+														class="h-5 w-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500"
+														name="fasilitas[]" type="checkbox" value="ac" checked>
+													<span
+														class="text-sm font-bold text-slate-600 transition group-hover:text-blue-600"><i
+															class="fas fa-snowflake w-5"></i> AC</span>
+												</label>
+											</div>
 
-							<div class="flex gap-4">
-								<button
-									class="flex-1 rounded-2xl border-2 border-gray-100 py-5 font-black uppercase tracking-widest text-gray-400 transition hover:bg-gray-50 active:scale-95"
-									type="button" onclick="history.back()">
-									Batal
-								</button>
-								<button
-									class="flex-[2] rounded-2xl bg-blue-600 py-5 font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-blue-100 transition hover:bg-blue-700 active:scale-95"
-									type="submit">
-									Simpan Unit Armada
-								</button>
-							</div>
+											<div class="flex gap-4">
+												<button
+													class="flex-1 rounded-2xl border-2 border-gray-100 py-5 font-black uppercase tracking-widest text-gray-400 transition hover:bg-gray-50 active:scale-95"
+													type="button" onclick="history.back()">
+													Batal
+												</button>
+												<button
+													class="flex-[2] rounded-2xl bg-blue-600 py-5 font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-blue-100 transition hover:bg-blue-700 active:scale-95"
+													type="submit">
+													Simpan Unit Armada
+												</button>
+											</div>
 
 						</form>
 					@endif

@@ -1,12 +1,11 @@
-# TODO: Add More Jadwal Schedules
+# TODO: Update Seat Layout to Indonesia Standard + Seat Type Indicators
 
-**Approved Plan:** Add 6 new jadwal (2 per transportasi), today departure.
+## Steps
 
-**Steps:**
-
-- [x] Create TODO.md
-- [ ] Edit DatabaseSeeder.php (add jadwal ID 4-9)
-- [ ] Run `php artisan migrate:fresh --seed`
-- [ ] Verify new jadwal via tinker
-- [ ] Test app (login user → home → search today)
-- [ ] attempt_completion
+- [x]   1. Update `database/seeders/SeatLayoutSeeder.php` — add seat_types, fix kereta to 2-3
+- [x]   2. Update `app/Http/Controllers/TransportController.php` — sync layouts array with seat_types
+- [x]   3. Fix `app/Http/Controllers/BookingController.php` — fix regex validation for up to F
+- [x]   4. Update `resources/views/admin/create.blade.php` — update dropdown labels
+- [x]   5. Update `resources/views/admin/edit.blade.php` — update dropdown labels
+- [x]   6. Redesign `resources/views/user/detail-jadwal.blade.php` — Traveloka-style layout + seat type indicators
+- [x]   7. Run seeder to update existing records
