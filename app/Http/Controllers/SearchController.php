@@ -87,12 +87,16 @@ class SearchController extends Controller
         $sortBy = $request->query('sort_by', 'harga'); // harga (termurah) atau durasi (tercepat)
 
         $query = Jadwal::with(['transportasi', 'asal', 'tujuan'])
-            ->when($asal, fn ($q) => $q->where('asal_id', $asal))
-            ->when($tujuan, fn ($q) => $q->where('tujuan_id', $tujuan))
-            ->when($tanggalRaw, fn ($q) =>
+            ->when($asal, fn($q) => $q->where('asal_id', $asal))
+            ->when($tujuan, fn($q) => $q->where('tujuan_id', $tujuan))
+            ->when(
+                $tanggalRaw,
+                fn($q) =>
                 $q->whereDate('waktu_berangkat', $tanggalRaw)
             )
-            ->whereHas('transportasi', fn ($q) =>
+            ->whereHas(
+                'transportasi',
+                fn($q) =>
                 $q->where('tipe', $moda)
             );
 

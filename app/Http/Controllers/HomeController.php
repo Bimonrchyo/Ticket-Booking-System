@@ -30,19 +30,19 @@ class HomeController extends Controller
         // Ambil jadwal populer - 1 dari setiap moda transportasi untuk variasi
         $modasForRoute = ['pesawat', 'bus', 'kereta', 'kapal'];
         $popularRoutes = collect();
-        
+
         foreach ($modasForRoute as $moda) {
             $route = Jadwal::with(['transportasi', 'asal', 'tujuan'])
                 ->whereHas('transportasi', fn($q) => $q->where('tipe', $moda))
                 ->withCount('bookings')
                 ->orderByDesc('bookings_count')
                 ->first();
-            
+
             if ($route) {
                 $popularRoutes->push($route);
             }
         }
-        
+
         // Jika belum ada 3 rute, tambahkan dari jadwal yang ada
         if ($popularRoutes->count() < 3) {
             $additional = Jadwal::with(['transportasi', 'asal', 'tujuan'])
