@@ -103,7 +103,7 @@ return new class extends Migration
             $table->string('nama_penumpang');
             $table->string('nik', 16);
             $table->string('nomor_kursi');
-            $table->enum('status', ['pending', 'paid', 'canceled', 'completed']);
+            $table->enum('status', ['pending', 'paid', 'canceled', 'completed', 'rejected']);
             $table->text('qr_code_data');
             $table->unsignedBigInteger('total_harga');
             $table->unique(['jadwal_id', 'nomor_kursi']);
