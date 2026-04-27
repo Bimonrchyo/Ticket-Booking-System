@@ -29,7 +29,34 @@ class BookingController extends Controller
         }
 
         $request->validate([
-            'seat' => 'required|string|max:5'
+            'seat' => [
+                'required',
+                'string',
+                'max:5',
+                function ($attribute, $value, $fail) use ($jadwal) {
+                    $layout = $jadwal->transportasi->seat_layout;
+                    if (!$layout)
+                        return $fail('Seat layout tidak ditemukan');
+
+                    $allLabels = array_merge($layout['left'] ?? ['A', 'B'], $layout['right'] ?? ['C', 'D']);
+                    $pattern = '/^(\d+)([' . implode('', $allLabels) . '])$/';
+                    preg_match($pattern, $value, $matches);
+                    if (!isset($matches[1], $matches[2]))
+                        return $fail('Format kursi tidak valid (contoh: 1A)');
+
+                    $row = (int) $matches[1];
+                    $letter = $matches[2];
+                    $maxRow = ceil($jadwal->transportasi->kapasitas / ($layout['seats_per_row'] ?? 4));
+
+                    if ($row < 1 || $row > $maxRow) {
+                        return $fail('Nomor baris tidak valid');
+                    }
+
+                    if (!in_array($letter, $allLabels)) {
+                        return $fail('Huruf kursi tidak valid untuk layout ini');
+                    }
+                }
+            ]
         ]);
 
         return view('user.checkout', [
@@ -46,7 +73,33 @@ class BookingController extends Controller
         }
 
         $request->validate([
-            'nomor_kursi' => 'required|string|max:5',
+            'nomor_kursi' => [
+                'required',
+                'string',
+                'max:5',
+                function ($attribute, $value, $fail) use ($jadwal) {
+                    $layout = $jadwal->transportasi->seat_layout;
+                    if (!$layout)
+                        return $fail('Seat layout tidak ditemukan');
+
+                    $allLabels = array_merge($layout['left'] ?? ['A', 'B'], $layout['right'] ?? ['C', 'D']);
+                    $pattern = '/^(\d+)([' . implode('', $allLabels) . '])$/';
+                    preg_match($pattern, $value, $matches);
+                    if (!isset($matches[1], $matches[2]))
+                        return $fail('Format kursi tidak valid');
+
+                    $row = (int) $matches[1];
+                    $letter = $matches[2];
+                    $maxRow = ceil($jadwal->transportasi->kapasitas / ($layout['seats_per_row'] ?? 4));
+
+                    if ($row < 1 || $row > $maxRow)
+                        return $fail('Nomor baris melebihi kapasitas');
+
+                    if (!in_array($letter, $allLabels)) {
+                        return $fail('Huruf kursi tidak valid untuk layout ini');
+                    }
+                }
+            ],
             'nama_penumpang' => 'required|string|max:255',
             'nik' => 'required|digits:16'
         ]);
@@ -175,7 +228,7 @@ class BookingController extends Controller
         $booking->load(['jadwal.transportasi', 'payment']);
 
         // Jika belum ada expired_at, buat baru (30 menit dari sekarang)
-        if (! $booking->expired_at) {
+        if (!$booking->expired_at) {
             $booking->expired_at = now()->addMinutes(30);
             $booking->saveQuietly();
         }
@@ -199,9 +252,11 @@ class BookingController extends Controller
     public function history()
     {
         $histori = Booking::where('user_id', Auth::id())
-            ->with(['jadwal' => function ($q) {
-                $q->with(['transportasi', 'asal', 'tujuan']);
-            }])
+            ->with([
+                'jadwal' => function ($q) {
+                    $q->with(['transportasi', 'asal', 'tujuan']);
+                }
+            ])
             ->latest()
             ->get();
 
@@ -217,7 +272,7 @@ class BookingController extends Controller
         abort_if($booking->user_id !== Auth::id(), 403);
 
         // Hanya bisa diulang pada status rejected atau unpaid
-        if (! in_array($booking->status, ['pending', 'canceled', 'rejected'])) {
+        if (!in_array($booking->status, ['pending', 'canceled', 'rejected'])) {
             return redirect()->back()->with('error', 'Hanya pesanan dengan status pending/rejected/canceled dapat diulang pembayaran.');
         }
 
@@ -260,7 +315,7 @@ class BookingController extends Controller
 
         $pdf = Pdf::loadView('pdf.tiket-pdf', compact('booking'));
 
-        return $pdf->download('Tiket-'.$booking->kode_booking.'.pdf');
+        return $pdf->download('Tiket-' . $booking->kode_booking . '.pdf');
     }
 
     // Proses Cetak Struk ke PDF
@@ -272,6 +327,6 @@ class BookingController extends Controller
             ->firstOrFail();
 
         $pdf = Pdf::loadView('pdf.invoice-pdf', compact('booking'));
-        return $pdf->stream('Invoice-'.$booking->kode_booking.'.pdf');
+        return $pdf->stream('Invoice-' . $booking->kode_booking . '.pdf');
     }
 }

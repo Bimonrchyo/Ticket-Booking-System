@@ -33,14 +33,59 @@ class TransportController extends Controller
             'nama_brand' => 'required|string|max:100',
             'kode_identitas' => 'required|string|max:50',
             'kapasitas' => 'required|integer|min:1',
+            'seat_layout' => 'required|string',
             'fasilitas' => 'nullable|array'
         ]);
+
+        $layouts = [
+            'bus' => [
+                'type' => 'bus',
+                'seats_per_row' => 4,
+                'left' => ['A', 'B'],
+                'right' => ['C', 'D'],
+                'aisle_after' => 2,
+                'rows' => 12,
+                'desc' => 'AKAP Standar 2-2',
+                'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'window'],
+            ],
+            'kereta' => [
+                'type' => 'kereta',
+                'seats_per_row' => 5,
+                'left' => ['A', 'B'],
+                'right' => ['C', 'D', 'E'],
+                'aisle_after' => 2,
+                'rows' => 16,
+                'desc' => 'KAI Ekonomi 2-3',
+                'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'middle', 'E' => 'window'],
+            ],
+            'pesawat' => [
+                'type' => 'pesawat',
+                'seats_per_row' => 6,
+                'left' => ['A', 'B', 'C'],
+                'right' => ['D', 'E', 'F'],
+                'aisle_after' => 3,
+                'rows' => 30,
+                'desc' => 'Narrow Body 3-3 Lion Air/Garuda',
+                'seat_types' => ['A' => 'window', 'B' => 'middle', 'C' => 'aisle', 'D' => 'aisle', 'E' => 'middle', 'F' => 'window'],
+            ],
+            'kapal' => [
+                'type' => 'kapal',
+                'seats_per_row' => 4,
+                'left' => ['A', 'B'],
+                'right' => ['C', 'D'],
+                'aisle_after' => 2,
+                'rows' => 25,
+                'desc' => 'Ferry Ekonomi 2-2',
+                'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'window'],
+            ],
+        ];
 
         Transportasi::create([
             'tipe' => $type,
             'nama_brand' => $request->nama_brand,
             'kode_identitas' => $request->kode_identitas,
             'kapasitas' => $request->kapasitas,
+            'seat_layout' => $layouts[$request->seat_layout] ?? $layouts['bus'],
             'fasilitas' => $request->fasilitas,
             'user_id' => auth('web')->id(),
         ]);
@@ -49,17 +94,14 @@ class TransportController extends Controller
 
     public function edit($type, Transportasi $transportasi)
     {
-        // Pastikan transportasi milik user yang login
         if ($transportasi->user_id !== Auth::id()) {
             abort(403);
         }
-
         return view('admin.edit', compact('type', 'transportasi'));
     }
 
     public function update(Request $request, $type, Transportasi $transportasi)
     {
-        // Pastikan transportasi milik user yang login
         if ($transportasi->user_id !== Auth::id()) {
             abort(403);
         }
@@ -67,13 +109,58 @@ class TransportController extends Controller
         $request->validate([
             'nama_brand' => 'required|string|max:100',
             'kode_identitas' => 'required|string|max:50',
-            'kapasitas' => 'required|integer|min:1'
+            'kapasitas' => 'required|integer|min:1',
+            'seat_layout' => 'required|string',
         ]);
+
+        $layouts = [
+            'bus' => [
+                'type' => 'bus',
+                'seats_per_row' => 4,
+                'left' => ['A', 'B'],
+                'right' => ['C', 'D'],
+                'aisle_after' => 2,
+                'rows' => 12,
+                'desc' => 'AKAP Standar 2-2',
+                'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'window'],
+            ],
+            'kereta' => [
+                'type' => 'kereta',
+                'seats_per_row' => 5,
+                'left' => ['A', 'B'],
+                'right' => ['C', 'D', 'E'],
+                'aisle_after' => 2,
+                'rows' => 16,
+                'desc' => 'KAI Ekonomi 2-3',
+                'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'middle', 'E' => 'window'],
+            ],
+            'pesawat' => [
+                'type' => 'pesawat',
+                'seats_per_row' => 6,
+                'left' => ['A', 'B', 'C'],
+                'right' => ['D', 'E', 'F'],
+                'aisle_after' => 3,
+                'rows' => 30,
+                'desc' => 'Narrow Body 3-3 Lion Air/Garuda',
+                'seat_types' => ['A' => 'window', 'B' => 'middle', 'C' => 'aisle', 'D' => 'aisle', 'E' => 'middle', 'F' => 'window'],
+            ],
+            'kapal' => [
+                'type' => 'kapal',
+                'seats_per_row' => 4,
+                'left' => ['A', 'B'],
+                'right' => ['C', 'D'],
+                'aisle_after' => 2,
+                'rows' => 25,
+                'desc' => 'Ferry Ekonomi 2-2',
+                'seat_types' => ['A' => 'window', 'B' => 'aisle', 'C' => 'aisle', 'D' => 'window'],
+            ],
+        ];
 
         $transportasi->update([
             'nama_brand' => $request->nama_brand,
             'kode_identitas' => $request->kode_identitas,
             'kapasitas' => $request->kapasitas,
+            'seat_layout' => $layouts[$request->seat_layout] ?? $layouts['bus'],
         ]);
 
         return redirect()->route('transportasi.index', $type)->with('success', 'Transportasi berhasil diupdate');
@@ -81,18 +168,15 @@ class TransportController extends Controller
 
     public function destroy($type, Transportasi $transportasi)
     {
-        // Pastikan transportasi milik user yang login
         if ($transportasi->user_id !== Auth::id()) {
             abort(403);
         }
 
-        // Cek apakah ada jadwal yang menggunakan transportasi ini
         if ($transportasi->jadwals()->exists()) {
             return redirect()->back()->with('error', 'Tidak dapat menghapus transportasi yang masih memiliki jadwal aktif');
         }
 
         $transportasi->delete();
-
         return redirect()->route('transportasi.index', $type)->with('success', 'Transportasi berhasil dihapus');
     }
 
@@ -110,7 +194,6 @@ class TransportController extends Controller
 
     public function createJadwal($type)
     {
-        // Ambil daftar armada sesuai tipe untuk dipilih di dropdown form jadwal
         $lokasis = Lokasi::orderBy('nama')->get();
         $armada = Transportasi::where('tipe', $type)
             ->where('user_id', Auth::id())
@@ -150,7 +233,6 @@ class TransportController extends Controller
 
     public function editJadwal($type, Jadwal $jadwal)
     {
-        // Pastikan jadwal milik user yang login (melalui transportasi)
         if ($jadwal->transportasi->user_id !== Auth::id()) {
             abort(403);
         }
@@ -163,7 +245,6 @@ class TransportController extends Controller
 
     public function updateJadwal(Request $request, $type, Jadwal $jadwal)
     {
-        // Pastikan jadwal milik user yang login
         if ($jadwal->transportasi->user_id !== Auth::id()) {
             abort(403);
         }
@@ -198,18 +279,15 @@ class TransportController extends Controller
 
     public function destroyJadwal($type, Jadwal $jadwal)
     {
-        // Pastikan jadwal milik user yang login
         if ($jadwal->transportasi->user_id !== Auth::id()) {
             abort(403);
         }
 
-        // Cek apakah ada booking yang menggunakan jadwal ini
         if ($jadwal->bookings()->exists()) {
             return redirect()->back()->with('error', 'Tidak dapat menghapus jadwal yang masih memiliki booking aktif');
         }
 
         $jadwal->delete();
-
         return redirect()->route('jadwal.index', $type)->with('success', 'Jadwal berhasil dihapus');
     }
 
