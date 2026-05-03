@@ -1,11 +1,15 @@
-# TODO: Update Seat Layout to Indonesia Standard + Seat Type Indicators
+# Ticket Booking System TODO
 
-## Steps
+## Implemented Steps:
 
-- [x]   1. Update `database/seeders/SeatLayoutSeeder.php` — add seat_types, fix kereta to 2-3
-- [x]   2. Update `app/Http/Controllers/TransportController.php` — sync layouts array with seat_types
-- [x]   3. Fix `app/Http/Controllers/BookingController.php` — fix regex validation for up to F
-- [x]   4. Update `resources/views/admin/create.blade.php` — update dropdown labels
-- [x]   5. Update `resources/views/admin/edit.blade.php` — update dropdown labels
-- [x]   6. Redesign `resources/views/user/detail-jadwal.blade.php` — Traveloka-style layout + seat type indicators
-- [x]   7. Run seeder to update existing records
+1. ✅ Analyzed files: detail-jadwal.blade.php (booking page with seat buttons & Ringkasan sidebar), seat-visual.blade.php (existing seat map partial)
+2. ✅ Created integration plan: Add @include('user.partials.seat-visual') below Total Bayar in sidebar
+3. ✅ User approved plan
+4. ✅ Edited detail-jadwal.blade.php: Added @include('user.partials.seat-visual') below Total Bayar
+5. ✅ Feedback v2: Enlarged image (w-32, max-h-48), removed text legend.
+6. ✅ Feedback v3: Further enlarged (w-full max-280px, taller), type-specific fallbacks for transport mismatch (kereta/bus etc.).
+7. ✅ Complete: Larger image, correct transport visuals.
+
+## Next:
+
+None
