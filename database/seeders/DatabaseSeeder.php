@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         $now = now();
 
         // COMPANIES
-        DB::table('companies')->insert([
+        DB::table('companies')->insertOrIgnore([
             [
                 'id' => 1,
                 'name' => 'Default Transport Company',
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // USERS
-        DB::table('users')->insert([
+        DB::table('users')->insertOrIgnore([
             [
                 'id' => 1,
                 'nama' => 'Super Admin',
@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // LOKASI
-        DB::table('lokasi')->insert([
+        DB::table('lokasi')->insertOrIgnore([
             ['id' => 1, 'nama' => 'Jakarta', 'kode' => 'JKT', 'created_at' => $now, 'updated_at' => $now],
             ['id' => 2, 'nama' => 'Bandung', 'kode' => 'BDG', 'created_at' => $now, 'updated_at' => $now],
             ['id' => 3, 'nama' => 'Surabaya', 'kode' => 'SBY', 'created_at' => $now, 'updated_at' => $now],
@@ -85,8 +85,8 @@ class DatabaseSeeder extends Seeder
             ['id' => 5, 'nama' => 'Denpasar', 'kode' => 'DPS', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
-        // TRANSPORTASI
-        DB::table('transportasi')->insert([
+        // TRANSPORTASI (using upsert to prevent duplicate errors)
+        DB::table('transportasi')->insertOrIgnore([
             [
                 'id' => 1,
                 'tipe' => 'kereta',
