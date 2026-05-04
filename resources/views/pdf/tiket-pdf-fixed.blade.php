@@ -24,7 +24,7 @@
 <body>
     <div class="ticket-container">
         <div class="ticket-header">
-            <h1>E-TIKET PERJALANAN [TICKET]</h1>
+            <h1>E-TIKET PERJALANAN</h1>
             <p>PastiTravel</p>
         </div>
 

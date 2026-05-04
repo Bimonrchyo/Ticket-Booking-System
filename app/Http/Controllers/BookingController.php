@@ -123,7 +123,7 @@ class BookingController extends Controller
                     throw new \Exception('Kursi sudah dibooking');
                 }
 
-                $kodeBooking = 'PT-'.strtoupper(Str::random(8));
+                $kodeBooking = 'PT-' . strtoupper(Str::random(8));
 
                 $biayaLayanan = 10000; // Biaya layanan PastiTravel Rp 10.000
 
@@ -313,9 +313,16 @@ class BookingController extends Controller
 
         $booking->load(['jadwal.transportasi', 'user']);
 
-        $pdf = Pdf::loadView('pdf.tiket-pdf', compact('booking'));
+        try {
+            $pdf = Pdf::loadView('pdf.tiket-pdf', compact('booking'))
+                ->setPaper('a4', 'portrait')
+                ->setOptions(['isJavascriptEnabled' => false, 'isHtml5ParserEnabled' => true]);
 
-        return $pdf->download('Tiket-' . $booking->kode_booking . '.pdf');
+            return $pdf->download('Tiket-' . $booking->kode_booking . '.pdf');
+        } catch (\Exception $e) {
+            Log::error('PDF Generation Error - Ticket: ' . $e->getMessage());
+            return response()->json(['error' => 'PDF generation failed: ' . $e->getMessage()], 500);
+        }
     }
 
     // Proses Cetak Struk ke PDF
@@ -323,10 +330,18 @@ class BookingController extends Controller
     {
         $booking = Booking::where('id', $id)
             ->where('user_id', Auth::id())
-            ->with('payment', 'user')
+            ->with('payment', 'user', 'jadwal.transportasi', 'jadwal.asal', 'jadwal.tujuan')
             ->firstOrFail();
 
-        $pdf = Pdf::loadView('pdf.invoice-pdf', compact('booking'));
-        return $pdf->stream('Invoice-' . $booking->kode_booking . '.pdf');
+        try {
+            $pdf = Pdf::loadView('pdf.invoice-pdf', compact('booking'))
+                ->setPaper('a4', 'portrait')
+                ->setOptions(['isJavascriptEnabled' => false, 'isHtml5ParserEnabled' => true]);
+
+            return $pdf->stream('Invoice-' . $booking->kode_booking . '.pdf');
+        } catch (\Exception $e) {
+            Log::error('PDF Generation Error - Invoice: ' . $e->getMessage());
+            return response()->json(['error' => 'PDF generation failed: ' . $e->getMessage()], 500);
+        }
     }
 }
