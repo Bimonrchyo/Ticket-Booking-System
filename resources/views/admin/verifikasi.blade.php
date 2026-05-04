@@ -163,13 +163,45 @@
 														</form>
 														<button
 															class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-															type="button" onclick="alert('Fitur tolak pembayaran akan ditambahkan nanti')">
+															type="button"
+															onclick="document.getElementById('rejectModal-{{ $booking->id }}').showModal()">
 															<i class="fas fa-times"></i>
 															Tolak
 														</button>
 													</div>
 												</td>
 											</tr>
+
+											<!-- Modal Tolak -->
+											<dialog id="rejectModal-{{ $booking->id }}" class="modal rounded-2xl p-6 shadow-2xl">
+												<div class="w-full max-w-md">
+													<h3 class="mb-4 text-xl font-bold text-gray-800">Tolak Pembayaran</h3>
+													<p class="mb-4 text-gray-600">Masukkan alasan penolakan untuk booking
+														<strong>{{ $booking->kode_booking }}</strong>
+													</p>
+													<form action="{{ route('admin.reject', $booking->id) }}" method="POST">
+														@csrf
+														@method('PATCH')
+														<div class="mb-4">
+															<label class="mb-2 block text-sm font-semibold text-gray-700">Alasan Penolakan</label>
+															<textarea name="reason" rows="3" required
+																class="w-full rounded-lg border border-gray-300 p-3 text-sm focus:border-red-500 focus:outline-none"
+																placeholder="Contoh: Bukti transfer tidak jelas, nominal tidak sesuai, dll."></textarea>
+														</div>
+														<div class="flex gap-3">
+															<button type="submit"
+																class="flex-1 rounded-lg bg-red-600 py-2 text-sm font-semibold text-white transition hover:bg-red-700">
+																Tolak Pembayaran
+															</button>
+															<button type="button"
+																class="flex-1 rounded-lg border border-gray-300 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+																onclick="document.getElementById('rejectModal-{{ $booking->id }}').close()">
+																Batal
+															</button>
+														</div>
+													</form>
+												</div>
+											</dialog>
 										@endforeach
 									</tbody>
 								</table>

@@ -14,22 +14,22 @@ class SearchController extends Controller
         'pesawat' => [
             'icon' => 'plane',
             'label' => 'Maskapai',
-            'operators' => ['Garuda Indonesia', 'Citilink', 'Lion Air'],
+            'operators' => ['Lion Air Boeing 737-900', 'Batik Air Airbus A320', 'Garuda Indonesia Boeing 777', 'Citilink Airbus A320'],
         ],
         'bus' => [
             'icon' => 'bus',
             'label' => 'Operator Bus',
-            'operators' => ['TransJakarta', 'Rosalia Indah', 'Sinar Jaya'],
+            'operators' => ['PO Sinar Jaya Premium', 'PO Sinar Jaya Ekonomi', 'PO Haryanto VIP', 'PO Haryanto Ekonomi'],
         ],
         'kereta' => [
             'icon' => 'train',
             'label' => 'Operator Kereta',
-            'operators' => ['Kereta Api Indonesia', 'Argo Parahyangan'],
+            'operators' => ['KAI Argo Bromo', 'KAI Eksekutif', 'KAI Bisnis', 'KAI Ekonomi'],
         ],
         'kapal' => [
             'icon' => 'ship',
             'label' => 'Operator Kapal',
-            'operators' => ['Pelni Express', 'ASDP'],
+            'operators' => ['Pelni KM. Dobonsolo', 'Pelni KM. Kelud', 'Pelni KM. Sinabung', 'Pelni KM. Ciremai'],
         ],
     ];
     public function index(Request $request)
@@ -87,12 +87,16 @@ class SearchController extends Controller
         $sortBy = $request->query('sort_by', 'harga'); // harga (termurah) atau durasi (tercepat)
 
         $query = Jadwal::with(['transportasi', 'asal', 'tujuan'])
-            ->when($asal, fn ($q) => $q->where('asal_id', $asal))
-            ->when($tujuan, fn ($q) => $q->where('tujuan_id', $tujuan))
-            ->when($tanggalRaw, fn ($q) =>
+            ->when($asal, fn($q) => $q->where('asal_id', $asal))
+            ->when($tujuan, fn($q) => $q->where('tujuan_id', $tujuan))
+            ->when(
+                $tanggalRaw,
+                fn($q) =>
                 $q->whereDate('waktu_berangkat', $tanggalRaw)
             )
-            ->whereHas('transportasi', fn ($q) =>
+            ->whereHas(
+                'transportasi',
+                fn($q) =>
                 $q->where('tipe', $moda)
             );
 

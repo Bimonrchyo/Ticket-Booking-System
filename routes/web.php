@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
@@ -113,7 +114,8 @@ Route::middleware(['auth', 'role:admin,superadmin'])->prefix('admin')->group(fun
 
     // 3. Verifikasi Pembayaran
     Route::get('/konfirmasi-pembayaran', [TransportController::class, 'listPayments'])->name('admin.payments');
-    Route::patch('/konfirmasi-pembayaran/{id}', [TransportController::class, 'approvePayment'])->name('admin.approve');
+    Route::patch('/konfirmasi-pembayaran/{id}/approve', [TransportController::class, 'approvePayment'])->name('admin.approve');
+    Route::patch('/konfirmasi-pembayaran/{id}/reject', [TransportController::class, 'rejectPayment'])->name('admin.reject');
 });
 
 // --- SUPERADMIN ROLE ---

@@ -329,4 +329,22 @@ class TransportController extends Controller
 
         return redirect()->back()->with('success', 'Pembayaran telah diverifikasi dan booking di-update.');
     }
+
+    public function rejectPayment(Request $request, $id)
+    {
+        $booking = Booking::where('status', 'pending')->with('payment')->findOrFail($id);
+
+        $reason = $request->input('reason', 'Pembayaran ditolak oleh admin');
+
+        $booking->update(['status' => 'rejected']);
+
+        if ($booking->payment) {
+            $booking->payment->update([
+                'status' => 'rejected',
+                'verified_at' => now(),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Pembayaran telah ditolak. Booking ditandai ditolak.');
+    }
 }
