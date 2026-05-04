@@ -25,9 +25,9 @@
 				@foreach ($modas as $moda)
 					@php
 						$activeClass =
-						    $active_moda == $moda['id']
-						        ? 'text-blue-600 border-b-2 border-blue-600'
-						        : 'text-gray-500 hover:text-blue-500';
+							$active_moda == $moda['id']
+							? 'text-blue-600 border-b-2 border-blue-600'
+							: 'text-gray-500 hover:text-blue-500';
 					@endphp
 
 					<a class="{{ $activeClass }} flex min-w-[80px] flex-col items-center pb-2 transition"
@@ -101,43 +101,47 @@
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 				@forelse ($popularRoutes as $route)
 					<div class="overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md">
-						<div class="flex h-40 w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+						<div
+							class="flex h-40 w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white">
 							<div class="text-center">
 								<i
 									class="fas {{ $route->transportasi->tipe == 'pesawat' ? 'fa-plane' : ($route->transportasi->tipe == 'bus' ? 'fa-bus' : ($route->transportasi->tipe == 'kereta' ? 'fa-train' : 'fa-ship')) }} text-4xl opacity-30"></i>
-								<p class="mt-2 text-xs font-bold uppercase tracking-widest">{{ ucfirst($route->transportasi->tipe) }}</p>
+								<p class="mt-2 text-xs font-bold uppercase tracking-widest">
+									{{ ucfirst($route->transportasi->tipe) }}
+								</p>
 							</div>
 						</div>
 						<div class="p-4">
-							<p class="text-xs font-bold uppercase text-blue-600"><i class="fas fa-heart mr-1 text-orange-500"></i>Favorit
+							<p class="text-xs font-bold uppercase text-blue-600"><i
+									class="fas fa-heart mr-1 text-orange-500"></i>Favorit
 								Travelers</p>
 							<h3 class="text-lg font-bold text-gray-800">{{ $route->asal->nama ?? 'N/A' }} →
-								{{ $route->tujuan->nama ?? 'N/A' }}</h3>
+								{{ $route->tujuan->nama ?? 'N/A' }}
+							</h3>
 							<p class="mb-4 text-sm text-gray-500">Mulai dari <span class="text-lg font-bold text-orange-500">Rp
 									{{ number_format($route->harga, 0, ',', '.') }}</span></p>
-							<a
-								class="inline-block w-full rounded-lg border border-blue-600 py-2 text-center text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+							<a class="inline-block w-full rounded-lg border border-blue-600 py-2 text-center text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
 								href="{{ route('pencarian', ['asal' => $route->asal_id, 'tujuan' => $route->tujuan_id, 'moda' => $route->transportasi->tipe]) }}">
 								Cek Jadwal
 							</a>
 						</div>
 					</div>
 				@empty
-					@for ($i = 1; $i <= 3; $i++)
-						<div class="overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md">
-							<img class="h-40 w-full object-cover" src="https://picsum.photos/400/200?random={{ $i }}"
-								alt="Destination">
-							<div class="p-4">
-								<p class="text-xs font-bold uppercase text-blue-600">Favorit Travelers</p>
-								<h3 class="text-lg font-bold text-gray-800">Rute Populer {{ $i }}</h3>
-								<p class="mb-4 text-sm text-gray-500">Mulai dari <span class="text-lg font-bold text-orange-500">Rp
-										250.000</span></p>
-								<button
-									class="w-full rounded-lg border border-blue-600 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50">Cek
-									Jadwal</button>
-							</div>
-						</div>
-					@endfor
+					<style>
+						.fallback-container {
+							text-align: center;
+							padding: 3rem;
+							color: #6b7;
+						}
+					</style>
+					<div style="text-align:center;padding:3rem">
+						<i class="fas fa-route" style="font-size:3rem;color:#d1d5db;margin-bottom:1rem"></i>
+						<p style="font-size:1.125rem;font-weight:600">Belum ada rute populer</p>
+						<p style="font-size:0.875rem;margin-bottom:1rem;color:#9ca3af">Jadilah yang pertama memesan tiket!</p>
+						<a href="{{ route('pencarian', ['moda' => 'pesawat']) }}"
+							style="display:inline-block;border-radius:0.5rem;background:#2563eb;padding:0.5rem 1.5rem;font-size:0.875rem;font-weight:600;color: white">Cari
+							Tiket</a>
+					</div>
 				@endforelse
 			</div>
 		</section>

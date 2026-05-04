@@ -55,14 +55,14 @@
 	@endphp
 
 	<div class="bg-gray-50 font-sans" x-data="{
-				selectedSeat: null,
-				bookedSeats: @js($bookedSeats),
-				selectSeat(seat) {
-					if (!this.bookedSeats.includes(seat)) {
-						this.selectedSeat = (this.selectedSeat === seat) ? null : seat;
-					}
-				}
-			}">
+						selectedSeat: null,
+						bookedSeats: @js($bookedSeats),
+						selectSeat(seat) {
+							if (!this.bookedSeats.includes(seat)) {
+								this.selectedSeat = (this.selectedSeat === seat) ? null : seat;
+							}
+						}
+					}">
 
 		<nav class="sticky top-0 z-40 bg-blue-700 p-4 text-white shadow-md">
 			<div class="mx-auto flex max-w-6xl items-center gap-4">
@@ -202,10 +202,10 @@
 												<button
 													class="relative flex h-10 w-10 flex-col items-center justify-center rounded-xl text-[10px] font-black transition-all duration-200"
 													@click="selectSeat('{{ $seatId }}')" :class="{
-																						'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
-																						'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
-																						'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
-																					}" @if($isBooked) disabled @endif title="{{ $typeLabels[$type] ?? '' }}">
+																														'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
+																														'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
+																														'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
+																													}" @if($isBooked) disabled @endif title="{{ $typeLabels[$type] ?? '' }}">
 													{{ $seatId }}
 													@if(!$isBooked)
 														<span
@@ -237,10 +237,10 @@
 												<button
 													class="relative flex h-10 w-10 flex-col items-center justify-center rounded-xl text-[10px] font-black transition-all duration-200"
 													@click="selectSeat('{{ $seatId }}')" :class="{
-																						'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
-																						'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
-																						'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
-																					}" @if($isBooked) disabled @endif title="{{ $typeLabels[$type] ?? '' }}">
+																														'bg-gray-100 text-gray-500 hover:bg-gray-200': !bookedSeats.includes('{{ $seatId }}') && selectedSeat !== '{{ $seatId }}',
+																														'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110': selectedSeat === '{{ $seatId }}',
+																														'bg-gray-300 text-white cursor-not-allowed': bookedSeats.includes('{{ $seatId }}')
+																													}" @if($isBooked) disabled @endif title="{{ $typeLabels[$type] ?? '' }}">
 													{{ $seatId }}
 													@if(!$isBooked)
 														<span
@@ -260,7 +260,7 @@
 			</div>
 
 			{{-- RIGHT COLUMN: Summary Sidebar --}}
-			<div class="lg:w-80">
+			<div class="lg:w-96 xl:w-[400px]">
 				<div
 					class="sticky top-24 transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
 					<h3 class="mb-4 text-sm font-black uppercase text-gray-800">Ringkasan</h3>
@@ -280,7 +280,11 @@
 							x-text="selectedSeat ? 'Rp {{ number_format($jadwal->harga, 0, ',', '.') }}' : 'Rp 0'"></span>
 					</div>
 
+					{{-- Seat Map Legend --}}
+					@include('user.partials.seat-visual', ['jadwal' => $jadwal])
+
 					<form method="GET" action="{{ route('checkout', $jadwal->id) }}">
+
 						<input name="seat" type="hidden" :value="selectedSeat">
 						<button
 							class="w-full rounded-2xl py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg transition active:scale-95"
