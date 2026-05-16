@@ -11,16 +11,16 @@
 
 @section('content')
 	<div class="bg-gray-50 font-sans" x-data="{
-		sameAsBooker: false,
-		bookerName: '',
-		passengerName: '',
-		passengerID: '',
-		updatePassenger() {
-			if (this.sameAsBooker) {
-				this.passengerName = this.bookerName;
+			sameAsBooker: false,
+			bookerName: '',
+			passengerName: '',
+			passengerID: '',
+			updatePassenger() {
+				if (this.sameAsBooker) {
+					this.passengerName = this.bookerName;
+				}
 			}
-		}
-	}">
+		}">
 
 		<nav class="sticky top-0 z-40 bg-blue-700 p-4 text-white shadow-md">
 			<div class="mx-auto flex max-w-6xl items-center justify-between px-2">
@@ -157,77 +157,80 @@
 				</div>
 				<div class="lg:w-80">
 					<div
-						class="sticky top-24 transform rounded-3xl border border-gray-300 bg-white p-6 shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
-						<h3 class="mb-4 text-sm font-black uppercase text-gray-800">Ringkasan Pesanan</h3>
+						class="sticky top-24 transform rounded-3xl border border-gray-300 bg-white shadow-2xl ring-1 ring-gray-100 transition-all hover:-translate-y-1">
+						<div class="p-6">
+							<h3 class="mb-4 text-sm font-black uppercase text-gray-800">Ringkasan Pesanan</h3>
 
-						<div class="mb-6 space-y-4">
-							<div class="flex items-start gap-3">
-								<i class="fas @if ($jadwal->transportasi->tipe === 'pesawat') fa-plane
-								@elseif($jadwal->transportasi->tipe === 'kereta') fa-train
-	@elseif($jadwal->transportasi->tipe === 'kapal') fa-ship
-	@else fa-bus @endif mt-1 text-blue-600"></i>
-								<div>
-									<p class="text-xs font-black text-gray-800">{{ $jadwal->transportasi->nama_brand }}</p>
-									<p class="text-[10px] font-bold uppercase text-gray-400">
-										{{ strtoupper($jadwal->transportasi->tipe) }} • Kursi
-										{{ $seat }}
-									</p>
+							<div class="mb-6 space-y-4">
+								<div class="flex items-start gap-3">
+									<i class="fas @if ($jadwal->transportasi->tipe === 'pesawat') fa-plane
+									@elseif($jadwal->transportasi->tipe === 'kereta') fa-train
+									@elseif($jadwal->transportasi->tipe === 'kapal') fa-ship
+		@else fa-bus @endif mt-1 text-blue-600"></i>
+									<div>
+										<p class="text-xs font-black text-gray-800">{{ $jadwal->transportasi->nama_brand }}
+										</p>
+										<p class="text-[10px] font-bold uppercase text-gray-400">
+											{{ strtoupper($jadwal->transportasi->tipe) }} • Kursi
+											{{ $seat }}
+										</p>
+									</div>
+								</div>
+								<div class="ml-2 space-y-3 border-l-2 border-dashed border-gray-100 pl-4">
+									<div>
+										<p class="text-[10px] font-black uppercase text-gray-400">Pergi</p>
+										<p class="text-xs font-bold text-gray-700">{{ $jadwal->asal->nama }}
+											({{ $jadwal->asal->kode }})</p>
+										<p class="text-[9px] text-gray-400">
+											{{ \Carbon\Carbon::parse($jadwal->waktu_berangkat)->translatedFormat('l, d M • H:i') }}
+										</p>
+									</div>
+									<div>
+										<p class="text-[10px] font-black uppercase text-gray-400">Tiba</p>
+										<p class="text-xs font-bold text-gray-700">{{ $jadwal->tujuan->nama }}
+											({{ $jadwal->tujuan->kode }})</p>
+										<p class="text-[9px] text-gray-400">
+											{{ \Carbon\Carbon::parse($jadwal->waktu_tiba)->translatedFormat('l, d M • H:i') }}
+										</p>
+									</div>
 								</div>
 							</div>
-							<div class="ml-2 space-y-3 border-l-2 border-dashed border-gray-100 pl-4">
-								<div>
-									<p class="text-[10px] font-black uppercase text-gray-400">Pergi</p>
-									<p class="text-xs font-bold text-gray-700">{{ $jadwal->asal->nama }}
-										({{ $jadwal->asal->kode }})</p>
-									<p class="text-[9px] text-gray-400">
-										{{ \Carbon\Carbon::parse($jadwal->waktu_berangkat)->translatedFormat('l, d M • H:i') }}
-									</p>
+
+							<div class="mb-6 space-y-2 border-t pt-4">
+								<div class="flex items-center justify-between text-sm">
+									<span class="font-bold text-gray-700">Harga Tiket</span>
+									<span class="font-bold">Rp {{ number_format($jadwal->harga, 0, ',', '.') }}</span>
 								</div>
-								<div>
-									<p class="text-[10px] font-black uppercase text-gray-400">Tiba</p>
-									<p class="text-xs font-bold text-gray-700">{{ $jadwal->tujuan->nama }}
-										({{ $jadwal->tujuan->kode }})</p>
-									<p class="text-[9px] text-gray-400">
-										{{ \Carbon\Carbon::parse($jadwal->waktu_tiba)->translatedFormat('l, d M • H:i') }}
-									</p>
+								<div class="flex items-center justify-between text-sm">
+									<span class="text-gray-500">Biaya Layanan PastiTravel</span>
+									<span class="text-gray-500">Rp 10.000</span>
 								</div>
+								<div class="h-px bg-gray-200"></div>
+								<div class="flex items-center justify-between">
+									<span class="text-lg font-bold uppercase text-gray-800">TOTAL BAYAR</span>
+									<span class="text-2xl font-black tracking-tighter text-orange-600">Rp
+										{{ number_format($jadwal->harga + 10000, 0, ',', '.') }}</span>
+								</div>
+								<p class="mt-2 text-[10px] font-bold text-green-600">✅ Termasuk E-Tiket digital & support
+									24/7
+								</p>
 							</div>
-						</div>
 
-						<div class="mb-6 space-y-2 border-t pt-4">
-							<div class="flex items-center justify-between text-sm">
-								<span class="font-bold text-gray-700">Harga Tiket</span>
-								<span class="font-bold">Rp {{ number_format($jadwal->harga, 0, ',', '.') }}</span>
-							</div>
-							<div class="flex items-center justify-between text-sm">
-								<span class="text-gray-500">Biaya Layanan PastiTravel</span>
-								<span class="text-gray-500">Rp 10.000</span>
-							</div>
-							<div class="h-px bg-gray-200"></div>
-							<div class="flex items-center justify-between">
-								<span class="text-lg font-bold uppercase text-gray-800">TOTAL BAYAR</span>
-								<span class="text-2xl font-black tracking-tighter text-orange-600">Rp
-									{{ number_format($jadwal->harga + 10000, 0, ',', '.') }}</span>
-							</div>
-							<p class="mt-2 text-[10px] font-bold text-green-600">✅ Termasuk E-Tiket digital & support 24/7
-							</p>
-						</div>
+							<button
+								class="w-full rounded-2xl bg-blue-700 py-4 text-xs font-black uppercase tracking-widest text-white shadow-xl transition hover:bg-blue-800"
+								type="submit">
+								Lanjutkan Pembayaran
+							</button>
 
-						<button
-							class="w-full rounded-2xl bg-blue-700 py-4 text-xs font-black uppercase tracking-widest text-white shadow-xl transition hover:bg-blue-800"
-							type="submit">
-							Lanjutkan Pembayaran
-						</button>
-
-						<div class="mt-4 flex items-start gap-2 text-[9px] leading-relaxed text-gray-400">
-							<i class="fas fa-shield-alt mt-0.5 text-green-500"></i>
-							<p>Data Anda aman dan terenkripsi. E-Tiket akan diterbitkan segera setelah pembayaran
-								dikonfirmasi.</p>
+							<div class="mt-4 flex items-start gap-2 text-[9px] leading-relaxed text-gray-400">
+								<i class="fas fa-shield-alt mt-0.5 text-green-500"></i>
+								<p>Data Anda aman dan terenkripsi. E-Tiket akan diterbitkan segera setelah pembayaran
+									dikonfirmasi.</p>
+							</div>
 						</div>
 					</div>
-				</div>
 
-			</div>
+				</div>
 		</form>
 
 	</div>
