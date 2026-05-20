@@ -772,10 +772,10 @@ class DatabaseSeeder extends Seeder
             $berangkat = Carbon::createFromFormat('H:i', explode('+', $sch[3])[0]);
             $tiba = Carbon::createFromFormat('H:i', explode('+', $sch[4])[0]);
             if (isset(explode('+', $sch[4])[1])) {
-                $tiba->addDays((int) explode('+', $sch[4])[1]);
+                $tiba->addDays((int)explode('+', $sch[4])[1]);
             }
             if (isset(explode('+', $sch[3])[1])) {
-                $berangkat->addDays((int) explode('+', $sch[3])[1]);
+                $berangkat->addDays((int)explode('+', $sch[3])[1]);
             }
 
             DB::table('jadwal')->insert([
@@ -806,79 +806,6 @@ class DatabaseSeeder extends Seeder
                 'jadwal_id' => 1,
                 'nama_penumpang' => 'Ahmad Fauzi',
                 'nik' => '3276010101010001',
-                'nomor_kursi' => 'A5',
-                'total_harga' => 120000,
-                'status' => 'canceled',
-                'qr_code_data' => 'QR-BOOK-2026-011',
-                'created_at' => $now->copy()->subDays(3),
-                'updated_at' => $now->copy()->subDays(2),
-            ],
-            [
-                'id' => 12,
-                'kode_booking' => 'BOOK-2026-012',
-                'user_id' => 9,
-                'jadwal_id' => 18,
-                'nama_penumpang' => 'Siti Rahayu',
-                'nik' => '3276010101010002',
-                'nomor_kursi' => 'B7',
-                'total_harga' => 950000,
-                'status' => 'canceled',
-                'qr_code_data' => 'QR-BOOK-2026-012',
-                'created_at' => $now->copy()->subDays(4),
-                'updated_at' => $now->copy()->subDays(3),
-            ],
-            // More PAID bookings
-            [
-                'id' => 13,
-                'kode_booking' => 'BOOK-2026-013',
-                'user_id' => 10,
-                'jadwal_id' => 25,
-                'nama_penumpang' => 'Budi Santoso',
-                'nik' => '3276010101010003',
-                'nomor_kursi' => 'D3',
-                'total_harga' => 380000,
-                'status' => 'paid',
-                'qr_code_data' => 'QR-BOOK-2026-013',
-                'created_at' => $now->copy()->subHours(8),
-                'updated_at' => $now->copy()->subHours(8),
-            ],
-            [
-                'id' => 14,
-                'kode_booking' => 'BOOK-2026-014',
-                'user_id' => 11,
-                'jadwal_id' => 35,
-                'nama_penumpang' => 'Dewi Lestari',
-                'nik' => '3276010101010004',
-                'nomor_kursi' => 'A6',
-                'total_harga' => 550000,
-                'status' => 'paid',
-                'qr_code_data' => 'QR-BOOK-2026-014',
-                'created_at' => $now->copy()->subHours(4),
-                'updated_at' => $now->copy()->subHours(4),
-            ],
-            [
-                'id' => 15,
-                'kode_booking' => 'BOOK-2026-015',
-                'user_id' => 12,
-                'jadwal_id' => 10,
-                'nama_penumpang' => 'Rudi Hermawan',
-                'nik' => '3276010101010005',
-                'nomor_kursi' => 'B4',
-                'total_harga' => 200000,
-                'status' => 'pending',
-                'qr_code_data' => 'QR-BOOK-2026-015',
-                'created_at' => $now->copy()->subMinutes(15),
-                'updated_at' => $now->copy()->subMinutes(15),
-            ],
-
-            // DUMMY PEMESANAN UNTUK JADWAL KAPAL 17 MEI 2026 (jadwal_id = 11)
-            [
-                'id' => 3,
-                'kode_booking' => 'BOOK-003',
-                'user_id' => 3,
-                'jadwal_id' => 11,
-                'nama_penumpang' => 'Andi Pratama',
-                'nik' => '3276010101010003',
                 'nomor_kursi' => 'A1',
                 'total_harga' => 150000,
                 'status' => 'paid',
